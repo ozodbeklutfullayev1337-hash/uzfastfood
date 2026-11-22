@@ -30,7 +30,7 @@ import {
   Bar,
 } from 'recharts';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://uzfastfood.onrender.com/api';
+const RAW_API = (import.meta.env.VITE_API_URL || 'https://uzfastfood.onrender.com/api').replace(/\/+$/, ''); const API_URL = RAW_API.endsWith('/api') ? RAW_API : RAW_API + '/api';
 const WS_URL = import.meta.env.VITE_WS_URL || 'https://uzfastfood.onrender.com';
 
 const STATUS_OPTIONS = [
