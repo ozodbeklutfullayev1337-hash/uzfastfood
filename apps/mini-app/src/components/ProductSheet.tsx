@@ -204,7 +204,7 @@ export const ProductSheet: React.FC<ProductSheetProps> = ({
             }}
             className="flex-1 py-4 px-5 rounded-2xl bg-[#B91C1C] text-white font-bold text-sm tracking-wide shadow-luxury flex items-center justify-center"
           >
-            SAVATCHAGA QO‘SHISH — {formatUZS(totalPrice)}
+            SAVATCHAGA QO'SHISH — {formatUZS(totalPrice)}
           </motion.button>
         </div>
       </motion.div>

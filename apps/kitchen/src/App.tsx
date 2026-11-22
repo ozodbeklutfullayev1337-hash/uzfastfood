@@ -71,7 +71,7 @@ export default function App() {
       {orders.length === 0 ? (
         <div className="h-[65vh] flex flex-col items-center justify-center text-slate-500 space-y-3">
           <CheckCircle2 className="w-16 h-16 text-emerald-500/40" />
-          <div className="text-xl font-bold">Hozircha navbatda buyurtmalar yo‘q</div>
+          <div className="text-xl font-bold">Hozircha navbatda buyurtmalar yo'q</div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -138,7 +138,7 @@ export default function App() {
                       onClick={() => updateStatus(order.id, 'READY')}
                       className="w-full py-3.5 rounded-2xl bg-emerald-500 text-black font-extrabold text-sm flex items-center justify-center gap-2"
                     >
-                      <CheckCircle2 className="w-5 h-5" /> TAYYOR BO‘LDI
+                      <CheckCircle2 className="w-5 h-5" /> TAYYOR BO'LDI
                     </button>
                   )}
                   {isReady && (
