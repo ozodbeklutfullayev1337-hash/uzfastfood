@@ -512,7 +512,7 @@ export default function App() {
             <div className="flex items-center justify-between">
               <h3 className="font-serif text-2xl font-bold">Eng mashhur taomlar</h3>
               <button onClick={() => setActiveTab('catalog’)} className="text-xs font-bold text-[#B91C1C]">
-                Barchasi в†'
+                Barchasi ’'
               </button>
             </div>
 
