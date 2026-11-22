@@ -16,8 +16,8 @@ declare global {
         ready: () => void;
         expand: () => void;
         HapticFeedback?: {
-          impactOccurred: (style: 'light' | \'medium' | \'heavy') => void;
-          notificationOccurred: (type: 'success' | \'warning’ | \'error') => void;
+          impactOccurred: (style: 'light' | 'medium' | 'heavy') => void;
+          notificationOccurred: (type: 'success' | 'warning' | 'error') => void;
         };
       };
     };
@@ -31,11 +31,11 @@ export function getTelegramHeaders(): Record<string, string> {
   }
   return {
     'x-dev-telegram-id': '777000111',
-    'x-dev-first-name': \'Ozodbek',
+    'x-dev-first-name': 'Ozodbek',
   };
 }
 
-export function haptic(style: 'light' | \'medium' | \'heavy' = \'light') {
+export function haptic(style: 'light' | 'medium' | 'heavy' = 'light') {
   window.Telegram?.WebApp?.HapticFeedback?.impactOccurred(style);
 }
 
@@ -43,7 +43,7 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
-      'Content-Type': \'application/json',
+      'Content-Type': 'application/json',
       ...getTelegramHeaders(),
       ...(options.headers || {}),
     },

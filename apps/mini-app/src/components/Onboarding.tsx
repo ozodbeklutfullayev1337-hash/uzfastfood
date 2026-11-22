@@ -19,7 +19,7 @@ const SLIDES = [
     id: 2,
     tag: 'EXPRESS HOT DELIVERY',
     title: 'Sevimli taomingizni tanlang. Biz uni issiqqina yetkazamiz.',
-    subtitle: 'Maxsus termo-qadoqlash texnologiyasi taomning oshxonadan chiqqan lahzadagi ta\'mini saqlaydi.',
+    subtitle: 'Maxsus termo-qadoqlash texnologiyasi taomning oshxonadan chiqqan lahzadagi ta’mini saqlaydi.',
     image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=90',
   },
   {
@@ -86,7 +86,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             <div
               key={s.id}
               className={`h-1.5 rounded-full transition-all duration-500 ${
-                idx === step ? 'w-12 bg-[#C59B27]' : idx < step ? \'w-6 bg-[#FAF7F2]/70' : \'w-6 bg-white/25'
+                idx === step ? 'w-12 bg-[#C59B27]' : idx < step ? 'w-6 bg-[#FAF7F2]/70' : 'w-6 bg-white/25'
               }`}
             />
           ))}
@@ -115,7 +115,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           onClick={handleNext}
           className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#B91C1C] to-[#991B1B] text-white font-bold text-base tracking-wide shadow-luxury flex items-center justify-center gap-3 border border-white/15"
         >
-          <span>{step === SLIDES.length - 1 ? 'BOSHLA' : \'KEYINGISI'}</span>
+          <span>{step === SLIDES.length - 1 ? 'BOSHLA' : 'KEYINGISI'}</span>
           <ArrowRight className="w-5 h-5" />
         </motion.button>
       </div>

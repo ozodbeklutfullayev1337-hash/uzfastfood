@@ -22,7 +22,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { apiFetch, formatUZS, haptic } from './lib/api';
-import { Onboarding } from './components/Onboarding’;
+import { Onboarding } from './components/Onboarding';
 import { ProductItem, ProductSheet, CustomizationOpt } from './components/ProductSheet';
 import { ComboBuilder } from './components/ComboBuilder';
 import { StoryItem, StoryViewer } from './components/StoryViewer';
@@ -63,7 +63,7 @@ interface OrderRecord {
 const STORIES: StoryItem[] = [
   {
     id: 's1',
-    title: 'YANGI TA\'M',
+    title: 'YANGI TA’M',
     badge: 'NEW DROP',
     image: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=1000&q=85',
     headline: 'Double Truffle Cheeseburger',
@@ -73,7 +73,7 @@ const STORIES: StoryItem[] = [
   {
     id: 's2',
     title: 'CHEGIRMALAR',
-    badge: '-15% PROMO’,
+    badge: '-15% PROMO',
     image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=1000&q=85',
     headline: 'WELCOME15 promo-kodi faol!',
     description: 'Ilova orqali ilk buyurtmangizga 15% chegirma oling.',
@@ -81,10 +81,10 @@ const STORIES: StoryItem[] = [
   },
   {
     id: 's3',
-    title: 'SMART COMBO’,
-    badge: '10% TEJANG’,
+    title: 'SMART COMBO',
+    badge: '10% TEJANG',
     image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=1000&q=85',
-    headline: 'O’z Combo menyuingizni yarating’,
+    headline: 'O’z Combo menyuingizni yarating',
     description: 'Burger + Fri + Ichimlik tanlang va avtomatik 10% chegirmaga ega bo’ling.',
     ctaText: 'COMBO TUZISH',
   },
@@ -100,18 +100,18 @@ const STORIES: StoryItem[] = [
 ];
 
 const TRACKING_STEPS = [
-  { key: 'PENDING’, label: \'Buyurtma qabul qilindi' },
-  { key: 'CONFIRMED', label: \'Tasdiqlandi' },
-  { key: 'PREPARING’, label: \'Tayyorlanmoqda' },
-  { key: 'READY', label: \'Tayyor' },
-  { key: 'ON_THE_WAY', label: \'Yo’lda' },
-  { key: 'DELIVERED', label: \'Yetkazildi' },
+  { key: 'PENDING', label: 'Buyurtma qabul qilindi' },
+  { key: 'CONFIRMED', label: 'Tasdiqlandi' },
+  { key: 'PREPARING', label: 'Tayyorlanmoqda' },
+  { key: 'READY', label: 'Tayyor' },
+  { key: 'ON_THE_WAY', label: 'Yo’lda' },
+  { key: 'DELIVERED', label: 'Yetkazildi' },
 ];
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem('tff_onboarding_seen'));
-  const [activeTab, setActiveTab] = useState<'home' | \'catalog’ | \'favorites' | \'cart' | \'profile'>(\'home');
+  const [activeTab, setActiveTab] = useState<'home' | 'catalog' | 'favorites' | 'cart' | 'profile'>('home');
 
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [products, setProducts] = useState<ProductItem[]>([]);
@@ -144,7 +144,7 @@ export default function App() {
   // Catalog filters
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<'popular' | \'price_asc' | \'price_desc'>(\'popular');
+  const [sortBy, setSortBy] = useState<'popular' | 'price_asc' | 'price_desc'>('popular');
   const [onlyDiscounts, setOnlyDiscounts] = useState(false);
 
   // Checkout state
@@ -153,7 +153,7 @@ export default function App() {
   const [address, setAddress] = useState('Toshkent sh., ');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [comment, setComment] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'CASH' | \'CARD_ON_DELIVERY'>(\'CASH');
+  const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'CARD_ON_DELIVERY'>('CASH');
   const [promoInput, setPromoInput] = useState('');
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discountAmount: number } | null>(null);
   const [useBonus, setUseBonus] = useState(false);
@@ -225,7 +225,7 @@ export default function App() {
     overrideUnitPrice?: number
   ) => {
     haptic('medium');
-    const uid = `${product.id}_${customizations.map((c) => c.id).join('-')}_${isCombo ? \'combo’ : \'std'}`;
+    const uid = `${product.id}_${customizations.map((c) => c.id).join('-')}_${isCombo ? 'combo' : 'std'}`;
     setCart((prev) => {
       const existing = prev.find((i) => i.uid === uid);
       if (existing) {
@@ -272,7 +272,7 @@ export default function App() {
   const deliveryFee = cartSubtotal === 0 || cartSubtotal - discountAmount >= freeThreshold ? 0 : settings?.deliveryFee ?? 15000;
   const finalTotal = Math.max(0, cartSubtotal - discountAmount - bonusApplied + deliveryFee);
 
-  const activeOrder = orders.find((o) => !['DELIVERED', \'CANCELLED'].includes(o.orderStatus));
+  const activeOrder = orders.find((o) => !['DELIVERED', 'CANCELLED'].includes(o.orderStatus));
 
   const handleApplyPromo = async () => {
     if (!promoInput.trim()) return;
@@ -305,7 +305,7 @@ export default function App() {
 
   const submitOrder = async () => {
     if (!customerName.trim() || phone.trim().length < 9 || address.trim().length < 5) {
-      alert('Iltimos, ism, telefon raqam va manzilni to’liq kiriting’);
+      alert('Iltimos, ism, telefon raqam va manzilni to’liq kiriting');
       return;
     }
     setSubmittingOrder(true);
@@ -425,7 +425,7 @@ export default function App() {
               const done = idx <= currentIdx;
               return (
                 <div key={st.key} className="space-y-1">
-                  <div className={`h-1.5 rounded-full ${done ? 'bg-[#C59B27]' : \'bg-white/20'}`} />
+                  <div className={`h-1.5 rounded-full ${done ? 'bg-[#C59B27]' : 'bg-white/20'}`} />
                 </div>
               );
             })}
@@ -481,7 +481,7 @@ export default function App() {
               <h2 className="font-serif text-3xl font-bold leading-tight">BUGUN O’ZINGIZNI SIYLANG!</h2>
               <p className="text-xs text-white/80">Sevimli ta’mingizni bir bosishda issiqqina buyurtma qiling.</p>
               <button
-                onClick={() => setActiveTab('catalog’)}
+                onClick={() => setActiveTab('catalog')}
                 className="mt-2 px-6 py-3 rounded-2xl bg-[#B91C1C] text-white font-bold text-xs tracking-wider uppercase shadow-lg"
               >
                 BUYURTMA BERISH
@@ -511,7 +511,7 @@ export default function App() {
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-serif text-2xl font-bold">Eng mashhur taomlar</h3>
-              <button onClick={() => setActiveTab('catalog’)} className="text-xs font-bold text-[#B91C1C]">
+              <button onClick={() => setActiveTab('catalog')} className="text-xs font-bold text-[#B91C1C]">
                 Barchasi ’'
               </button>
             </div>
@@ -533,7 +533,7 @@ export default function App() {
       )}
 
       {/* TAB 2: CATALOG */}
-      {activeTab === 'catalog’ && (
+      {activeTab === 'catalog' && (
         <main className="px-5 pt-4 space-y-5">
           {/* Search */}
           <div className="relative">
@@ -551,7 +551,7 @@ export default function App() {
             <button
               onClick={() => setSelectedCategory('all')}
               className={`px-4 py-2.5 rounded-2xl text-xs font-bold shrink-0 transition-all ${
-                selectedCategory === 'all' ? \'bg-[#0F0F0F] text-[#FAF7F2]' : \'bg-[#F2ECE1] text-[#0F0F0F]'
+                selectedCategory === 'all' ? 'bg-[#0F0F0F] text-[#FAF7F2]' : 'bg-[#F2ECE1] text-[#0F0F0F]'
               }`}
             >
               Barchasi
@@ -561,7 +561,7 @@ export default function App() {
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2.5 rounded-2xl text-xs font-bold shrink-0 transition-all ${
-                  selectedCategory === cat.id ? 'bg-[#0F0F0F] text-[#FAF7F2]' : \'bg-[#F2ECE1] text-[#0F0F0F]'
+                  selectedCategory === cat.id ? 'bg-[#0F0F0F] text-[#FAF7F2]' : 'bg-[#F2ECE1] text-[#0F0F0F]'
                 }`}
               >
                 {cat.name}
@@ -574,14 +574,14 @@ export default function App() {
             <button
               onClick={() => setOnlyDiscounts(!onlyDiscounts)}
               className={`px-3.5 py-2 rounded-xl text-xs font-bold border ${
-                onlyDiscounts ? 'bg-[#B91C1C] text-white border-[#B91C1C]' : \'bg-white border-[#0F0F0F]/10'
+                onlyDiscounts ? 'bg-[#B91C1C] text-white border-[#B91C1C]' : 'bg-white border-[#0F0F0F]/10'
               }`}
             >
               % Chegirmalar
             </button>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'popular' | \'price_asc' | \'price_desc')}
+              onChange={(e) => setSortBy(e.target.value as 'popular' | 'price_asc' | 'price_desc')}
               className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white border border-[#0F0F0F]/10"
             >
               <option value="popular">Mashhurlik bo’yicha</option>
@@ -614,7 +614,7 @@ export default function App() {
               <Heart className="w-10 h-10 mx-auto text-[#B91C1C]/60" />
               <p className="text-sm font-semibold text-[#0F0F0F]/70">Hali sevimli taomlar qo’shilmagan</p>
               <button
-                onClick={() => setActiveTab('catalog’)}
+                onClick={() => setActiveTab('catalog')}
                 className="px-5 py-2.5 rounded-xl bg-[#0F0F0F] text-white text-xs font-bold"
               >
                 Menyuni ko’rish
@@ -649,7 +649,7 @@ export default function App() {
               <ShoppingBag className="w-10 h-10 mx-auto text-[#0F0F0F]/40" />
               <p className="text-sm font-semibold text-[#0F0F0F]/70">Savatchangiz hozircha bo’sh</p>
               <button
-                onClick={() => setActiveTab('catalog’)}
+                onClick={() => setActiveTab('catalog')}
                 className="px-6 py-3 rounded-2xl bg-[#B91C1C] text-white text-xs font-bold"
               >
                 TAOM TANLASH
@@ -716,7 +716,7 @@ export default function App() {
                 </div>
                 <div className="flex gap-2.5 overflow-x-auto no-scrollbar">
                   {products
-                    .filter((p) => ['coca-cola', \'french-fries', \'milkshake'].some((s) => p.name.toLowerCase().includes(s.split('-')[0])))
+                    .filter((p) => ['coca-cola', 'french-fries', 'milkshake'].some((s) => p.name.toLowerCase().includes(s.split('-')[0])))
                     .slice(0, 3)
                     .map((upsell) => (
                       <button
@@ -962,7 +962,7 @@ export default function App() {
                     <button
                       onClick={() => setPaymentMethod('CASH')}
                       className={`py-3 rounded-2xl text-xs font-bold border ${
-                        paymentMethod === 'CASH' ? \'bg-[#0F0F0F] text-white border-[#0F0F0F]' : \'bg-white border-[#0F0F0F]/15'
+                        paymentMethod === 'CASH' ? 'bg-[#0F0F0F] text-white border-[#0F0F0F]' : 'bg-white border-[#0F0F0F]/15'
                       }`}
                     >
                       Naqd pul
@@ -1056,7 +1056,7 @@ export default function App() {
           <StoryViewer
             story={activeStory}
             onClose={() => setActiveStory(null)}
-            onAction={() => setActiveTab('catalog’)}
+            onAction={() => setActiveTab('catalog')}
           />
         )}
       </AnimatePresence>
@@ -1064,11 +1064,11 @@ export default function App() {
       {/* BOTTOM NAVIGATION */}
       <nav className="fixed bottom-0 inset-x-0 max-w-lg mx-auto z-30 bg-[#FAF7F2]/95 backdrop-blur-xl border-t border-[#0F0F0F]/10 px-4 py-2.5 flex items-center justify-around">
         {[
-          { id: 'home', icon: Home, label: \'Asosiy' },
-          { id: 'catalog’, icon: LayoutGrid, label: \'Katalog’ },
-          { id: 'favorites', icon: Heart, label: \'Sevimli' },
-          { id: 'cart', icon: ShoppingBag, label: \'Savatcha', badge: cart.reduce((s, i) => s + i.quantity, 0) },
-          { id: 'profile', icon: UserIcon, label: \'Profil' },
+          { id: 'home', icon: Home, label: 'Asosiy' },
+          { id: 'catalog', icon: LayoutGrid, label: 'Katalog' },
+          { id: 'favorites', icon: Heart, label: 'Sevimli' },
+          { id: 'cart', icon: ShoppingBag, label: 'Savatcha', badge: cart.reduce((s, i) => s + i.quantity, 0) },
+          { id: 'profile', icon: UserIcon, label: 'Profil' },
         ].map((tab) => {
           const Icon = tab.icon;
           const active = activeTab === tab.id;
@@ -1080,7 +1080,7 @@ export default function App() {
                 setActiveTab(tab.id as typeof activeTab);
               }}
               className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all ${
-                active ? 'text-[#B91C1C]' : \'text-[#0F0F0F]/55'
+                active ? 'text-[#B91C1C]' : 'text-[#0F0F0F]/55'
               }`}
             >
               <Icon className="w-5 h-5" />
@@ -1149,7 +1149,7 @@ function ProductCard({
           }}
           className="absolute top-3.5 right-3.5 w-10 h-10 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center shadow"
         >
-          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-[#B91C1C] text-[#B91C1C]' : \'text-[#0F0F0F]'}`} />
+          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-[#B91C1C] text-[#B91C1C]' : 'text-[#0F0F0F]'}`} />
         </button>
 
         <span className="absolute bottom-3 left-3.5 px-2.5 py-1 rounded-full bg-black/65 backdrop-blur-md text-white text-[11px] font-semibold flex items-center gap-1">

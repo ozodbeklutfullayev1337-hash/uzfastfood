@@ -34,14 +34,14 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://uzfastfood.onrender.com
 const WS_URL = import.meta.env.VITE_WS_URL || 'https://uzfastfood.onrender.com';
 
 const STATUS_OPTIONS = [
-  { value: 'PENDING’, label: \'Qabul qilindi', color: \'bg-amber-500/20 text-amber-300 border-amber-500/30' },
-  { value: 'CONFIRMED', label: \'Tasdiqlandi', color: \'bg-blue-500/20 text-blue-300 border-blue-500/30' },
-  { value: 'PREPARING’, label: \'Tayyorlanmoqda', color: \'bg-purple-500/20 text-purple-300 border-purple-500/30' },
-  { value: 'READY', label: \'Tayyor', color: \'bg-cyan-500/20 text-cyan-300 border-cyan-500/30' },
-  { value: 'COURIER_ASSIGNED', label: \'Kuryerda', color: \'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' },
-  { value: 'ON_THE_WAY', label: \'Yo’lda', color: \'bg-orange-500/20 text-orange-300 border-orange-500/30' },
-  { value: 'DELIVERED', label: \'Yetkazildi', color: \'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
-  { value: 'CANCELLED', label: \'Bekor qilindi', color: \'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+  { value: 'PENDING', label: 'Qabul qilindi', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+  { value: 'CONFIRMED', label: 'Tasdiqlandi', color: 'bg-blue-500/20 text-blue-300 border-blue-500/30' },
+  { value: 'PREPARING', label: 'Tayyorlanmoqda', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
+  { value: 'READY', label: 'Tayyor', color: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30' },
+  { value: 'COURIER_ASSIGNED', label: 'Kuryerda', color: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' },
+  { value: 'ON_THE_WAY', label: 'Yo’lda', color: 'bg-orange-500/20 text-orange-300 border-orange-500/30' },
+  { value: 'DELIVERED', label: 'Yetkazildi', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+  { value: 'CANCELLED', label: 'Bekor qilindi', color: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
 ];
 
 function fmt(n: number) {
@@ -54,7 +54,7 @@ export default function App() {
   const [passwordInput, setPasswordInput] = useState('admin12345');
   const [loginError, setLoginError] = useState('');
 
-  const [tab, setTab] = useState<'dashboard' | \'orders' | \'products' | \'categories' | \'promotions' | \'customers' | \'branches' | \'settings'>(\'dashboard');
+  const [tab, setTab] = useState<'dashboard' | 'orders' | 'products' | 'categories' | 'promotions' | 'customers' | 'branches' | 'settings'>('dashboard');
 
   const [dashboardData, setDashboardData] = useState<{
     metrics: Record<string, number>;
@@ -73,14 +73,14 @@ export default function App() {
   // Forms
   const [newProd, setNewProd] = useState({ name: '', description: '', imageUrl: '', categoryId: '', price: '', oldPrice: '', preparationTime: '15', isPopular: true });
   const [newCat, setNewCat] = useState({ name: '', description: '', imageUrl: '', sortOrder: '1' });
-  const [newPromo, setNewPromo] = useState({ code: '', title: '', discountType: \'PERCENTAGE', discountValue: '10', minOrderAmount: '50000' });
+  const [newPromo, setNewPromo] = useState({ code: '', title: '', discountType: 'PERCENTAGE', discountValue: '10', minOrderAmount: '50000' });
   const [newBranch, setNewBranch] = useState({ name: '', address: '', phone: '+998 90 755 31 23', workingHours: '10:00 - 03:00' });
 
   const adminFetch = async (path: string, options: RequestInit = {}) => {
     const res = await fetch(`${API_URL}/admin${path}`, {
       ...options,
       headers: {
-        'Content-Type': \'application/json',
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
         ...(options.headers || {}),
       },
@@ -139,7 +139,7 @@ export default function App() {
     try {
       const res = await fetch(`${API_URL}/admin/login`, {
         method: 'POST',
-        headers: { 'Content-Type': \'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ login: loginInput, password: passwordInput }),
       });
       const data = await res.json();
@@ -153,7 +153,7 @@ export default function App() {
 
   const exportCSV = () => {
     const rows = [
-      ['Buyurtma #', \'Mijoz', \'Telefon', \'Summa', \'Manzil', \'Holat', \'Sana'],
+      ['Buyurtma #', 'Mijoz', 'Telefon', 'Summa', 'Manzil', 'Holat', 'Sana'],
       ...orders.map((o) => [
         o.orderNumber,
         o.customerName,
@@ -219,14 +219,14 @@ export default function App() {
 
           <nav className="space-y-1">
             {[
-              { id: 'dashboard', label: \'Dashboard & Analitika', icon: LayoutDashboard },
+              { id: 'dashboard', label: 'Dashboard & Analitika', icon: LayoutDashboard },
               { id: 'orders', label: `Buyurtmalar (${orders.length})`, icon: ShoppingBag },
-              { id: 'products', label: \'Mahsulotlar CRUD', icon: UtensilsCrossed },
-              { id: 'categories', label: \'Kategoriyalar', icon: Layers },
-              { id: 'promotions', label: \'Promo-kodlar', icon: Tag },
-              { id: 'customers', label: \'Mijozlar bazasi', icon: Users },
-              { id: 'branches', label: \'Filiallar', icon: Store },
-              { id: 'settings', label: \'Yetkazib berish & Sozlama', icon: SettingsIcon },
+              { id: 'products', label: 'Mahsulotlar CRUD', icon: UtensilsCrossed },
+              { id: 'categories', label: 'Kategoriyalar', icon: Layers },
+              { id: 'promotions', label: 'Promo-kodlar', icon: Tag },
+              { id: 'customers', label: 'Mijozlar bazasi', icon: Users },
+              { id: 'branches', label: 'Filiallar', icon: Store },
+              { id: 'settings', label: 'Yetkazib berish & Sozlama', icon: SettingsIcon },
             ].map((item) => {
               const Icon = item.icon;
               return (
@@ -234,7 +234,7 @@ export default function App() {
                   key={item.id}
                   onClick={() => setTab(item.id as typeof tab)}
                   className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                    tab === item.id ? 'bg-[#B91C1C] text-white' : \'text-slate-400 hover:bg-white/5 hover:text-white'
+                    tab === item.id ? 'bg-[#B91C1C] text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -278,14 +278,14 @@ export default function App() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: 'Bugungi savdo’, val: fmt(dashboardData.metrics.todayRevenue), icon: DollarSign, color: \'text-emerald-400' },
-                { label: 'Umumiy daromad', val: fmt(dashboardData.metrics.totalRevenue), icon: TrendingUp, color: \'text-[#C59B27]' },
-                { label: 'Jami buyurtmalar', val: `${dashboardData.metrics.totalOrders} ta`, icon: ShoppingBag, color: \'text-blue-400' },
-                { label: 'O’rtacha chek', val: fmt(dashboardData.metrics.avgOrderValue), icon: CheckCircle2, color: \'text-purple-400' },
-                { label: 'Yangi buyurtmalar', val: `${dashboardData.metrics.pendingOrders} ta`, icon: Clock, color: \'text-amber-400' },
-                { label: 'Tayyorlanmoqda', val: `${dashboardData.metrics.preparingOrders} ta`, icon: UtensilsCrossed, color: \'text-orange-400' },
-                { label: 'Yetkazilgan', val: `${dashboardData.metrics.deliveredOrders} ta`, icon: CheckCircle2, color: \'text-emerald-400' },
-                { label: 'Mijozlar soni', val: `${dashboardData.metrics.customersCount} nafar`, icon: Users, color: \'text-cyan-400' },
+                { label: 'Bugungi savdo', val: fmt(dashboardData.metrics.todayRevenue), icon: DollarSign, color: 'text-emerald-400' },
+                { label: 'Umumiy daromad', val: fmt(dashboardData.metrics.totalRevenue), icon: TrendingUp, color: 'text-[#C59B27]' },
+                { label: 'Jami buyurtmalar', val: `${dashboardData.metrics.totalOrders} ta`, icon: ShoppingBag, color: 'text-blue-400' },
+                { label: 'O’rtacha chek', val: fmt(dashboardData.metrics.avgOrderValue), icon: CheckCircle2, color: 'text-purple-400' },
+                { label: 'Yangi buyurtmalar', val: `${dashboardData.metrics.pendingOrders} ta`, icon: Clock, color: 'text-amber-400' },
+                { label: 'Tayyorlanmoqda', val: `${dashboardData.metrics.preparingOrders} ta`, icon: UtensilsCrossed, color: 'text-orange-400' },
+                { label: 'Yetkazilgan', val: `${dashboardData.metrics.deliveredOrders} ta`, icon: CheckCircle2, color: 'text-emerald-400' },
+                { label: 'Mijozlar soni', val: `${dashboardData.metrics.customersCount} nafar`, icon: Users, color: 'text-cyan-400' },
               ].map((card) => {
                 const Icon = card.icon;
                 return (
@@ -400,7 +400,7 @@ export default function App() {
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
-                await adminFetch('/products', { method: \'POST', body: JSON.stringify(newProd) });
+                await adminFetch('/products', { method: 'POST', body: JSON.stringify(newProd) });
                 setNewProd({ ...newProd, name: '', description: '', imageUrl: '', price: '', oldPrice: '' });
                 loadAll();
               }}
@@ -482,7 +482,7 @@ export default function App() {
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
-                await adminFetch('/categories', { method: \'POST', body: JSON.stringify(newCat) });
+                await adminFetch('/categories', { method: 'POST', body: JSON.stringify(newCat) });
                 setNewCat({ name: '', description: '', imageUrl: '', sortOrder: '1' });
                 loadAll();
               }}
@@ -519,8 +519,8 @@ export default function App() {
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
-                await adminFetch('/promotions', { method: \'POST', body: JSON.stringify(newPromo) });
-                setNewPromo({ code: '', title: '', discountType: \'PERCENTAGE', discountValue: '10', minOrderAmount: '50000' });
+                await adminFetch('/promotions', { method: 'POST', body: JSON.stringify(newPromo) });
+                setNewPromo({ code: '', title: '', discountType: 'PERCENTAGE', discountValue: '10', minOrderAmount: '50000' });
                 loadAll();
               }}
               className="p-5 rounded-2xl bg-[#14161A] border border-white/10 grid grid-cols-1 md:grid-cols-5 gap-3"
@@ -546,9 +546,9 @@ export default function App() {
                       await adminFetch(`/promotions/${p.id}/toggle`, { method: 'PATCH' });
                       loadAll();
                     }}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold ${p.isActive ? 'bg-emerald-500/20 text-emerald-300' : \'bg-slate-700 text-slate-300'}`}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold ${p.isActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-700 text-slate-300'}`}
                   >
-                    {p.isActive ? 'Faol' : \'O’chirilgan'}
+                    {p.isActive ? 'Faol' : 'O’chirilgan'}
                   </button>
                 </div>
               ))}
@@ -596,7 +596,7 @@ export default function App() {
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
-                await adminFetch('/branches', { method: \'POST', body: JSON.stringify(newBranch) });
+                await adminFetch('/branches', { method: 'POST', body: JSON.stringify(newBranch) });
                 setNewBranch({ name: '', address: '', phone: '+998 90 755 31 23', workingHours: '10:00 - 03:00' });
                 loadAll();
               }}
@@ -626,7 +626,7 @@ export default function App() {
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
-                await adminFetch('/settings', { method: \'PUT', body: JSON.stringify(settings) });
+                await adminFetch('/settings', { method: 'PUT', body: JSON.stringify(settings) });
                 alert('Sozlamalar saqlandi!');
                 loadAll();
               }}

@@ -8,7 +8,7 @@ const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:4000';
 interface KitchenOrder {
   id: string;
   orderNumber: number;
-  orderStatus: 'PENDING’ | \'CONFIRMED' | \'PREPARING’ | \'READY';
+  orderStatus: 'PENDING' | 'CONFIRMED' | 'PREPARING' | 'READY';
   comment?: string | null;
   createdAt: string;
   items: Array<{
@@ -45,7 +45,7 @@ export default function App() {
   const updateStatus = async (id: string, status: string) => {
     await fetch(`${API_URL}/admin/kitchen/orders/${id}/status`, {
       method: 'PATCH',
-      headers: { 'Content-Type': \'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),
     });
     loadOrders();
@@ -76,7 +76,7 @@ export default function App() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {orders.map((order) => {
-            const isPreparing = order.orderStatus === 'PREPARING’;
+            const isPreparing = order.orderStatus === 'PREPARING';
             const isReady = order.orderStatus === 'READY';
             return (
               <div
@@ -127,7 +127,7 @@ export default function App() {
                 <div className="pt-2">
                   {!isPreparing && !isReady && (
                     <button
-                      onClick={() => updateStatus(order.id, 'PREPARING’)}
+                      onClick={() => updateStatus(order.id, 'PREPARING')}
                       className="w-full py-3.5 rounded-2xl bg-amber-500 text-black font-extrabold text-sm flex items-center justify-center gap-2"
                     >
                       <Flame className="w-5 h-5" /> TAYYORLASHNI BOSHLASH
