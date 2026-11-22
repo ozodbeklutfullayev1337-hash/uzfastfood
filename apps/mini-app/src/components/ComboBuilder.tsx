@@ -12,7 +12,7 @@ interface ComboBuilderProps {
 
 export const ComboBuilder: React.FC<ComboBuilderProps> = ({ products, onClose, onAddCombo }) => {
   const burgers = products.filter((p) => p.price >= 26000 && p.price <= 85000);
-  const fries = products.filter((p) => p.name.toLowerCase().includes('fries') || p.name.toLowerCase().includes('nuggets'));
+  const fries = products.filter((p) => p.name.toLowerCase().includes('fries') || p.name.toLowerCase().includes(\'nuggets'));
   const drinks = products.filter((p) => p.price <= 15000 || p.name.toLowerCase().includes('milkshake'));
 
   const [selectedMain, setSelectedMain] = useState<ProductItem | null>(burgers[0] || products[0] || null);
@@ -75,7 +75,7 @@ export const ComboBuilder: React.FC<ComboBuilderProps> = ({ products, onClose, o
                     key={item.id}
                     onClick={() => setSelectedMain(item)}
                     className={`p-3 rounded-2xl border text-left transition-all ${
-                      active ? 'bg-[#0F0F0F] text-white border-[#0F0F0F]' : 'bg-white border-[#0F0F0F]/10'
+                      active ? 'bg-[#0F0F0F] text-white border-[#0F0F0F]' : \'bg-white border-[#0F0F0F]/10'
                     }`}
                   >
                     <img src={item.imageUrl} alt={item.name} className="w-full h-20 object-cover rounded-xl mb-2" />
@@ -98,7 +98,7 @@ export const ComboBuilder: React.FC<ComboBuilderProps> = ({ products, onClose, o
                     key={item.id}
                     onClick={() => setSelectedSide(item)}
                     className={`p-2.5 rounded-2xl border text-left ${
-                      active ? 'bg-[#0F0F0F] text-white border-[#0F0F0F]' : 'bg-white border-[#0F0F0F]/10'
+                      active ? 'bg-[#0F0F0F] text-white border-[#0F0F0F]' : \'bg-white border-[#0F0F0F]/10'
                     }`}
                   >
                     <div className="font-bold text-xs line-clamp-1">{item.name}</div>
@@ -120,7 +120,7 @@ export const ComboBuilder: React.FC<ComboBuilderProps> = ({ products, onClose, o
                     key={item.id}
                     onClick={() => setSelectedDrink(item)}
                     className={`p-3 rounded-2xl border flex items-center justify-between ${
-                      active ? 'bg-[#0F0F0F] text-white border-[#0F0F0F]' : 'bg-white border-[#0F0F0F]/10'
+                      active ? 'bg-[#0F0F0F] text-white border-[#0F0F0F]' : \'bg-white border-[#0F0F0F]/10'
                     }`}
                   >
                     <span className="font-bold text-xs">{item.name}</span>
@@ -135,12 +135,12 @@ export const ComboBuilder: React.FC<ComboBuilderProps> = ({ products, onClose, o
           <div className="space-y-2.5">
             <h3 className="text-xs font-extrabold uppercase tracking-wider text-[#0F0F0F]/60">4. Maxsus sous (Bepul)</h3>
             <div className="flex flex-wrap gap-2">
-              {['Issiq pishloqli sous', 'Firmali BBQ sous', 'Trufelli mayonez', 'Achchiq Chili'].map((s) => (
+              {['Issiq pishloqli sous', \'Firmali BBQ sous', \'Trufelli mayonez', \'Achchiq Chili'].map((s) => (
                 <button
                   key={s}
                   onClick={() => setSauce(s)}
                   className={`px-3.5 py-2 rounded-xl text-xs font-bold ${
-                    sauce === s ? 'bg-[#B91C1C] text-white' : 'bg-[#F2ECE1] text-[#0F0F0F]'
+                    sauce === s ? 'bg-[#B91C1C] text-white' : \'bg-[#F2ECE1] text-[#0F0F0F]'
                   }`}
                 >
                   {s}

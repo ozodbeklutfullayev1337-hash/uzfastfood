@@ -12,21 +12,21 @@ const SLIDES = [
     id: 1,
     tag: 'THE FAST FOOD • LUXURY EDITION',
     title: 'Siz xohlagan taʼm — endi yanada yaqin!',
-    subtitle: '100% marmar mol go'shti, mualliflik souslari va har bir luqmada san'at darajasidagi sifat.',
+    subtitle: '100% marmar mol go\'shti, mualliflik souslari va har bir luqmada san'at darajasidagi sifat.',
     image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=90',
   },
   {
     id: 2,
     tag: 'EXPRESS HOT DELIVERY',
     title: 'Sevimli taomingizni tanlang. Biz uni issiqqina yetkazamiz.',
-    subtitle: 'Maxsus termo-qadoqlash texnologiyasi taomning oshxonadan chiqqan lahzadagi ta'mini saqlaydi.',
+    subtitle: 'Maxsus termo-qadoqlash texnologiyasi taomning oshxonadan chiqqan lahzadagi ta\'mini saqlaydi.',
     image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=90',
   },
   {
     id: 3,
     tag: 'UNFORGETTABLE EXPERIENCE',
     title: 'THE FAST FOOD bilan har bir luqma — alohida zavq!',
-    subtitle: 'Har bir buyurtmadan bonus ballar yig'ing va VIP imtiyozlardan foydalaning.',
+    subtitle: 'Har bir buyurtmadan bonus ballar yig\'ing va VIP imtiyozlardan foydalaning.',
     image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=1200&q=90',
   },
 ];
@@ -86,7 +86,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             <div
               key={s.id}
               className={`h-1.5 rounded-full transition-all duration-500 ${
-                idx === step ? 'w-12 bg-[#C59B27]' : idx < step ? 'w-6 bg-[#FAF7F2]/70' : 'w-6 bg-white/25'
+                idx === step ? 'w-12 bg-[#C59B27]' : idx < step ? \'w-6 bg-[#FAF7F2]/70' : \'w-6 bg-white/25'
               }`}
             />
           ))}
@@ -115,7 +115,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           onClick={handleNext}
           className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#B91C1C] to-[#991B1B] text-white font-bold text-base tracking-wide shadow-luxury flex items-center justify-center gap-3 border border-white/15"
         >
-          <span>{step === SLIDES.length - 1 ? 'BOSHLA' : 'KEYINGISI'}</span>
+          <span>{step === SLIDES.length - 1 ? 'BOSHLA' : \'KEYINGISI'}</span>
           <ArrowRight className="w-5 h-5" />
         </motion.button>
       </div>

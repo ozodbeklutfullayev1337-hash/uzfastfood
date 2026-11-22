@@ -8,7 +8,7 @@ const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:4000';
 interface KitchenOrder {
   id: string;
   orderNumber: number;
-  orderStatus: 'PENDING' | 'CONFIRMED' | 'PREPARING' | 'READY';
+  orderStatus: 'PENDING' | \'CONFIRMED' | \'PREPARING' | \'READY';
   comment?: string | null;
   createdAt: string;
   items: Array<{
@@ -45,7 +45,7 @@ export default function App() {
   const updateStatus = async (id: string, status: string) => {
     await fetch(`${API_URL}/admin/kitchen/orders/${id}/status`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': \'application/json' },
       body: JSON.stringify({ status }),
     });
     loadOrders();

@@ -11,8 +11,8 @@ export default {
         gold: '#C59B27',
       },
       fontFamily: {
-        serif: ['"Playfair Display"', 'Georgia', 'serif'],
-        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        serif: ['"Playfair Display"', \'Georgia', \'serif'],
+        sans: ['"Plus Jakarta Sans"', \'system-ui', \'sans-serif'],
       },
       boxShadow: {
         luxury: '0 20px 50px -12px rgba(15, 15, 15, 0.14)',

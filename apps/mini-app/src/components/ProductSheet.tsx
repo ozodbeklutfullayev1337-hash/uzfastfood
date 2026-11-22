@@ -95,7 +95,7 @@ export const ProductSheet: React.FC<ProductSheetProps> = ({
                 onClick={() => onToggleFavorite(product.id)}
                 className="w-11 h-11 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center shadow-md"
               >
-                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-[#B91C1C] text-[#B91C1C]' : 'text-[#0F0F0F]'}`} />
+                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-[#B91C1C] text-[#B91C1C]' : \'text-[#0F0F0F]'}`} />
               </button>
               <button
                 onClick={onClose}
@@ -158,14 +158,14 @@ export const ProductSheet: React.FC<ProductSheetProps> = ({
                         <div className="flex items-center gap-3">
                           <div
                             className={`w-5 h-5 rounded-md flex items-center justify-center border ${
-                              active ? 'bg-[#C59B27] border-[#C59B27] text-white' : 'border-[#0F0F0F]/30'
+                              active ? 'bg-[#C59B27] border-[#C59B27] text-white' : \'border-[#0F0F0F]/30'
                             }`}
                           >
                             {active && <Check className="w-3.5 h-3.5" />}
                           </div>
                           <span className="text-sm font-semibold">{opt.name}</span>
                         </div>
-                        <span className={`text-xs font-bold ${active ? 'text-[#C59B27]' : 'text-[#0F0F0F]/70'}`}>
+                        <span className={`text-xs font-bold ${active ? 'text-[#C59B27]' : \'text-[#0F0F0F]/70'}`}>
                           {opt.price > 0 ? `+${formatUZS(opt.price)}` : 'Bepul'}
                         </span>
                       </button>
