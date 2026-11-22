@@ -51,6 +51,7 @@ model User {
   telegramId String     @unique
   username   String?
   firstName  String
+  balance    Int        @default(0)
   lastName   String?
   phone      String?
   birthDate  DateTime?
@@ -61,6 +62,7 @@ model User {
   favorites  Favorite[]
   addresses  Address[]
   loyalty    Loyalty?
+  topUps     TopUpRequest[]
 }
 
 model Category {
