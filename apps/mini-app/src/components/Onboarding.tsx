@@ -46,7 +46,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#0F0F0F] text-[#FAF7F2] flex flex-col justify-between overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-[#18181D] text-[#FAF7F2] flex flex-col justify-between overflow-hidden">
       <AnimatePresence mode="wait">
         <motion.div
           key={current.id}
@@ -64,7 +64,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       {/* Top Bar */}
       <div className="relative z-10 flex items-center justify-between px-6 pt-8">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#C59B27]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#D4AF37]" />
           <span className="font-serif tracking-[0.2em] text-sm font-bold text-[#FAF7F2]">THE FAST FOOD</span>
         </div>
         <button
@@ -72,7 +72,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             localStorage.setItem('tff_onboarding_seen', '1');
             onComplete();
           }}
-          className="text-xs uppercase tracking-widest text-[#FAF7F2]/70 hover:text-white px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md"
+          className="text-xs uppercase tracking-widest text-[#FAF7F2]/70 hover:text-white px-3 py-1.5 rounded-full bg-[#121216]/10 backdrop-blur-md"
         >
           O’tkazish
         </button>
@@ -86,7 +86,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             <div
               key={s.id}
               className={`h-1.5 rounded-full transition-all duration-500 ${
-                idx === step ? 'w-12 bg-[#C59B27]' : idx < step ? 'w-6 bg-[#FAF7F2]/70' : 'w-6 bg-white/25'
+                idx === step ? 'w-12 bg-[#D4AF37]' : idx < step ? 'w-6 bg-[#09090B]/70' : 'w-6 bg-[#121216]/25'
               }`}
             />
           ))}
@@ -101,7 +101,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             transition={{ duration: 0.45 }}
             className="space-y-3"
           >
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C59B27]/20 border border-[#C59B27]/40 text-[#C59B27] text-[11px] font-bold tracking-widest">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#D4AF37] text-[11px] font-bold tracking-widest">
               <Sparkles className="w-3.5 h-3.5" />
               {current.tag}
             </div>
@@ -113,7 +113,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={handleNext}
-          className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#B91C1C] to-[#991B1B] text-white font-bold text-base tracking-wide shadow-luxury flex items-center justify-center gap-3 border border-white/15"
+          className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#E11D48] to-[#991B1B] text-white font-bold text-base tracking-wide shadow-luxury flex items-center justify-center gap-3 border border-white/15"
         >
           <span>{step === SLIDES.length - 1 ? 'BOSHLA' : 'KEYINGISI'}</span>
           <ArrowRight className="w-5 h-5" />

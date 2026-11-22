@@ -19,9 +19,10 @@ import {
   Phone,
   Navigation,
   Tag,
-  RotateCcw,
+  RotateCcw, Volume2, VolumeX,
 } from 'lucide-react';
 import { apiFetch, formatUZS, haptic } from './lib/api';
+import { soundFX } from './lib/sound';
 import { Onboarding } from './components/Onboarding';
 import { ProductItem, ProductSheet, CustomizationOpt } from './components/ProductSheet';
 import { ComboBuilder } from './components/ComboBuilder';
@@ -110,6 +111,7 @@ const TRACKING_STEPS = [
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
+  const [soundOn, setSoundOn] = useState(() => soundFX.isEnabled());
   const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem('tff_onboarding_seen'));
   const [activeTab, setActiveTab] = useState<'home' | 'catalog' | 'favorites' | 'cart' | 'profile'>('home');
 
@@ -354,18 +356,18 @@ export default function App() {
   // Luxury Splash Screen
   if (showSplash) {
     return (
-      <div className="fixed inset-0 z-50 bg-[#0F0F0F] flex flex-col items-center justify-center text-[#FAF7F2]">
+      <div className="fixed inset-0 z-50 bg-[#18181D] flex flex-col items-center justify-center text-[#FAF7F2]">
         <motion.div
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="text-center space-y-4"
         >
-          <div className="w-16 h-16 mx-auto rounded-2xl border border-[#C59B27]/50 flex items-center justify-center bg-[#C59B27]/10">
-            <Sparkles className="w-8 h-8 text-[#C59B27]" />
+          <div className="w-16 h-16 mx-auto rounded-2xl border border-[#D4AF37]/50 flex items-center justify-center bg-[#D4AF37]/10">
+            <Sparkles className="w-8 h-8 text-[#D4AF37]" />
           </div>
           <h1 className="font-serif text-3xl tracking-[0.25em] font-bold">THE FAST FOOD</h1>
-          <p className="text-xs tracking-[0.35em] text-[#C59B27] uppercase">Premium Food Experience</p>
+          <p className="text-xs tracking-[0.35em] text-[#D4AF37] uppercase">Premium Food Experience</p>
         </motion.div>
       </div>
     );
@@ -376,31 +378,31 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#0F0F0F] pb-28 max-w-lg mx-auto relative shadow-2xl">
+    <div className="min-h-screen bg-[#09090B] text-[#F4F4F5] pb-28 max-w-lg mx-auto relative shadow-2xl">
       {/* HEADER */}
-      <header className="sticky top-0 z-30 bg-[#FAF7F2]/90 backdrop-blur-xl px-5 py-4 border-b border-[#0F0F0F]/5 flex items-center justify-between">
+      <header className="sticky top-0 z-30 bg-[#09090B]/90 backdrop-blur-xl px-5 py-4 border-b border-white/10/5 flex items-center justify-between">
         <div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#B91C1C]" />
+            <span className="w-2 h-2 rounded-full bg-[#E11D48]" />
             <span className="font-serif font-extrabold tracking-[0.16em] text-sm">THE FAST FOOD</span>
           </div>
-          <div className="flex items-center gap-1 text-xs text-[#0F0F0F]/65 mt-0.5">
-            <MapPin className="w-3.5 h-3.5 text-[#C59B27]" />
+          <div className="flex items-center gap-1 text-xs text-[#F4F4F5]/65 mt-0.5">
+            <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span className="truncate max-w-[200px]">{settings?.deliveryZone || 'Toshkent shahri'}</span>
           </div>
         </div>
 
         <button
           onClick={() => setActiveTab('profile')}
-          className="flex items-center gap-2.5 bg-[#F2ECE1] pl-3 pr-2 py-1.5 rounded-full border border-[#0F0F0F]/5"
+          className="flex items-center gap-2.5 bg-[#141418] pl-3 pr-2 py-1.5 rounded-full border border-white/10/5"
         >
           <div className="text-right">
             <div className="text-xs font-bold leading-none">{userProfile?.firstName || 'Mehmon'}</div>
-            <div className="text-[10px] font-bold text-[#C59B27] mt-0.5">
+            <div className="text-[10px] font-bold text-[#D4AF37] mt-0.5">
               {(userProfile?.loyalty?.points || 0).toLocaleString('ru-RU')} ball
             </div>
           </div>
-          <div className="w-8 h-8 rounded-full bg-[#0F0F0F] text-[#FAF7F2] flex items-center justify-center font-serif font-bold text-xs">
+          <div className="w-8 h-8 rounded-full bg-[#18181D] text-[#FAF7F2] flex items-center justify-center font-serif font-bold text-xs">
             {(userProfile?.firstName || 'M')[0]}
           </div>
         </button>
@@ -408,11 +410,11 @@ export default function App() {
 
       {/* LIVE ORDER TRACKING BANNER */}
       {activeOrder && (
-        <div className="mx-5 mt-4 p-4 rounded-3xl bg-[#0F0F0F] text-[#FAF7F2] shadow-luxury space-y-3">
+        <div className="mx-5 mt-4 p-4 rounded-3xl bg-[#18181D] text-[#FAF7F2] shadow-luxury space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#C59B27] animate-ping" />
-              <span className="text-xs font-bold tracking-wider uppercase text-[#C59B27]">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#D4AF37] animate-ping" />
+              <span className="text-xs font-bold tracking-wider uppercase text-[#D4AF37]">
                 JONLI KUZATUV ' BUYURTMA #{activeOrder.orderNumber}
               </span>
             </div>
@@ -425,7 +427,7 @@ export default function App() {
               const done = idx <= currentIdx;
               return (
                 <div key={st.key} className="space-y-1">
-                  <div className={`h-1.5 rounded-full ${done ? 'bg-[#C59B27]' : 'bg-white/20'}`} />
+                  <div className={`h-1.5 rounded-full ${done ? 'bg-[#D4AF37]' : 'bg-[#121216]/20'}`} />
                 </div>
               );
             })}
@@ -450,14 +452,14 @@ export default function App() {
                 onClick={() => setActiveStory(story)}
                 className="flex flex-col items-center gap-1.5 shrink-0"
               >
-                <div className="w-[72px] h-[72px] rounded-full p-[2.5px] bg-gradient-to-tr from-[#B91C1C] via-[#C59B27] to-[#0F0F0F]">
+                <div className="w-[72px] h-[72px] rounded-full p-[2.5px] bg-gradient-to-tr from-[#E11D48] via-[#D4AF37] to-[#0F0F0F]">
                   <img
                     src={story.image}
                     alt={story.title}
                     className="w-full h-full object-cover rounded-full border-2 border-[#FAF7F2]"
                   />
                 </div>
-                <span className="text-[11px] font-bold tracking-tight text-[#0F0F0F]/85">{story.title}</span>
+                <span className="text-[11px] font-bold tracking-tight text-[#F4F4F5]/85">{story.title}</span>
               </button>
             ))}
           </div>
@@ -466,7 +468,7 @@ export default function App() {
           <motion.section
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative h-72 rounded-[32px] overflow-hidden bg-[#0F0F0F] shadow-luxury flex flex-col justify-end p-6 text-white"
+            className="relative h-72 rounded-[32px] overflow-hidden bg-[#18181D] shadow-luxury flex flex-col justify-end p-6 text-white"
           >
             <img
               src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=90"
@@ -475,14 +477,14 @@ export default function App() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0F] via-[#0F0F0F]/45 to-transparent" />
             <div className="relative z-10 space-y-2.5">
-              <span className="inline-block px-3 py-1 rounded-full bg-[#C59B27] text-[#0F0F0F] text-[10px] font-extrabold tracking-widest uppercase">
+              <span className="inline-block px-3 py-1 rounded-full bg-[#D4AF37] text-[#F4F4F5] text-[10px] font-extrabold tracking-widest uppercase">
                 CHEF SIGNATURE
               </span>
               <h2 className="font-serif text-3xl font-bold leading-tight">BUGUN O’ZINGIZNI SIYLANG!</h2>
               <p className="text-xs text-white/80">Sevimli ta’mingizni bir bosishda issiqqina buyurtma qiling.</p>
               <button
                 onClick={() => setActiveTab('catalog')}
-                className="mt-2 px-6 py-3 rounded-2xl bg-[#B91C1C] text-white font-bold text-xs tracking-wider uppercase shadow-lg"
+                className="mt-2 px-6 py-3 rounded-2xl bg-[#E11D48] text-white font-bold text-xs tracking-wider uppercase shadow-lg"
               >
                 BUYURTMA BERISH
               </button>
@@ -492,17 +494,17 @@ export default function App() {
           {/* Smart Combo Builder Banner */}
           <section
             onClick={() => setShowComboBuilder(true)}
-            className="p-5 rounded-[28px] bg-gradient-to-r from-[#F2ECE1] to-[#E8DEC8] border border-[#C59B27]/30 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-transform"
+            className="p-5 rounded-[28px] bg-gradient-to-r from-[#F2ECE1] to-[#E8DEC8] border border-[#D4AF37]/30 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-transform"
           >
             <div className="space-y-1">
-              <div className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#B91C1C] uppercase tracking-wider">
+              <div className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#E11D48] uppercase tracking-wider">
                 <Sparkles className="w-3.5 h-3.5" />
                 SMART COMBO BUILDER
               </div>
-              <h3 className="font-serif text-xl font-bold text-[#0F0F0F]">O’z Combo menyuingizni tuzing</h3>
-              <p className="text-xs text-[#0F0F0F]/70">Taom + Fri + Ichimlik tanlang va 10% tejang!</p>
+              <h3 className="font-serif text-xl font-bold text-[#F4F4F5]">O’z Combo menyuingizni tuzing</h3>
+              <p className="text-xs text-[#F4F4F5]/70">Taom + Fri + Ichimlik tanlang va 10% tejang!</p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-[#0F0F0F] text-[#C59B27] flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-[#18181D] text-[#D4AF37] flex items-center justify-center shrink-0">
               <Plus className="w-6 h-6" />
             </div>
           </section>
@@ -511,7 +513,7 @@ export default function App() {
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-serif text-2xl font-bold">Eng mashhur taomlar</h3>
-              <button onClick={() => setActiveTab('catalog')} className="text-xs font-bold text-[#B91C1C]">
+              <button onClick={() => setActiveTab('catalog')} className="text-xs font-bold text-[#E11D48]">
                 Barchasi ’'
               </button>
             </div>
@@ -537,12 +539,12 @@ export default function App() {
         <main className="px-5 pt-4 space-y-5">
           {/* Search */}
           <div className="relative">
-            <Search className="w-4 h-4 text-[#0F0F0F]/45 absolute left-4 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#F4F4F5]/45 absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Burger, pizza, fri yoki ichimlik izlash..."
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white border border-[#0F0F0F]/10 text-sm focus:outline-none focus:border-[#0F0F0F]"
+              className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-[#121216] border border-white/10/10 text-sm focus:outline-none focus:border-white/10"
             />
           </div>
 
@@ -551,7 +553,7 @@ export default function App() {
             <button
               onClick={() => setSelectedCategory('all')}
               className={`px-4 py-2.5 rounded-2xl text-xs font-bold shrink-0 transition-all ${
-                selectedCategory === 'all' ? 'bg-[#0F0F0F] text-[#FAF7F2]' : 'bg-[#F2ECE1] text-[#0F0F0F]'
+                selectedCategory === 'all' ? 'bg-[#18181D] text-[#FAF7F2]' : 'bg-[#141418] text-[#F4F4F5]'
               }`}
             >
               Barchasi
@@ -561,7 +563,7 @@ export default function App() {
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2.5 rounded-2xl text-xs font-bold shrink-0 transition-all ${
-                  selectedCategory === cat.id ? 'bg-[#0F0F0F] text-[#FAF7F2]' : 'bg-[#F2ECE1] text-[#0F0F0F]'
+                  selectedCategory === cat.id ? 'bg-[#18181D] text-[#FAF7F2]' : 'bg-[#141418] text-[#F4F4F5]'
                 }`}
               >
                 {cat.name}
@@ -574,7 +576,7 @@ export default function App() {
             <button
               onClick={() => setOnlyDiscounts(!onlyDiscounts)}
               className={`px-3.5 py-2 rounded-xl text-xs font-bold border ${
-                onlyDiscounts ? 'bg-[#B91C1C] text-white border-[#B91C1C]' : 'bg-white border-[#0F0F0F]/10'
+                onlyDiscounts ? 'bg-[#E11D48] text-white border-[#E11D48]' : 'bg-[#121216] border-white/10/10'
               }`}
             >
               % Chegirmalar
@@ -582,7 +584,7 @@ export default function App() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'popular' | 'price_asc' | 'price_desc')}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white border border-[#0F0F0F]/10"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#121216] border border-white/10/10"
             >
               <option value="popular">Mashhurlik bo’yicha</option>
               <option value="price_asc">Arzonroq avval</option>
@@ -610,12 +612,12 @@ export default function App() {
         <main className="px-5 pt-5 space-y-5">
           <h2 className="font-serif text-2xl font-bold">Sevimli taomlarim</h2>
           {products.filter((p) => favoriteIds.includes(p.id)).length === 0 ? (
-            <div className="p-10 text-center bg-[#F2ECE1] rounded-3xl space-y-3">
-              <Heart className="w-10 h-10 mx-auto text-[#B91C1C]/60" />
-              <p className="text-sm font-semibold text-[#0F0F0F]/70">Hali sevimli taomlar qo’shilmagan</p>
+            <div className="p-10 text-center bg-[#141418] rounded-3xl space-y-3">
+              <Heart className="w-10 h-10 mx-auto text-[#E11D48]/60" />
+              <p className="text-sm font-semibold text-[#F4F4F5]/70">Hali sevimli taomlar qo’shilmagan</p>
               <button
                 onClick={() => setActiveTab('catalog')}
-                className="px-5 py-2.5 rounded-xl bg-[#0F0F0F] text-white text-xs font-bold"
+                className="px-5 py-2.5 rounded-xl bg-[#18181D] text-white text-xs font-bold"
               >
                 Menyuni ko’rish
               </button>
@@ -645,12 +647,12 @@ export default function App() {
           <h2 className="font-serif text-2xl font-bold">Savatcha</h2>
 
           {cart.length === 0 ? (
-            <div className="p-10 text-center bg-[#F2ECE1] rounded-3xl space-y-3">
-              <ShoppingBag className="w-10 h-10 mx-auto text-[#0F0F0F]/40" />
-              <p className="text-sm font-semibold text-[#0F0F0F]/70">Savatchangiz hozircha bo’sh</p>
+            <div className="p-10 text-center bg-[#141418] rounded-3xl space-y-3">
+              <ShoppingBag className="w-10 h-10 mx-auto text-[#F4F4F5]/40" />
+              <p className="text-sm font-semibold text-[#F4F4F5]/70">Savatchangiz hozircha bo’sh</p>
               <button
                 onClick={() => setActiveTab('catalog')}
-                className="px-6 py-3 rounded-2xl bg-[#B91C1C] text-white text-xs font-bold"
+                className="px-6 py-3 rounded-2xl bg-[#E11D48] text-white text-xs font-bold"
               >
                 TAOM TANLASH
               </button>
@@ -662,24 +664,24 @@ export default function App() {
                   const extras = item.customizations.reduce((s, c) => s + c.price, 0);
                   const unit = item.overrideUnitPrice ?? item.product.price + extras;
                   return (
-                    <div key={item.uid} className="p-3.5 rounded-3xl bg-white border border-[#0F0F0F]/5 flex gap-3.5 items-center shadow-sm">
+                    <div key={item.uid} className="p-3.5 rounded-3xl bg-[#121216] border border-white/10/5 flex gap-3.5 items-center shadow-sm">
                       <img src={item.product.imageUrl} alt={item.product.name} className="w-20 h-20 rounded-2xl object-cover shrink-0" />
                       <div className="flex-1 min-w-0">
                         <h4 className="font-bold text-sm truncate">
                           {item.isCombo ? `Combo: ${item.product.name}` : item.product.name}
                         </h4>
                         {item.customizations.length > 0 && (
-                          <p className="text-[11px] text-[#0F0F0F]/60 truncate">
+                          <p className="text-[11px] text-[#F4F4F5]/60 truncate">
                             {item.customizations.map((c) => c.name).join(', ')}
                           </p>
                         )}
                         {item.comboDetails && (
-                          <p className="text-[11px] text-[#C59B27] font-medium truncate">{item.comboDetails.join(' • ')}</p>
+                          <p className="text-[11px] text-[#D4AF37] font-medium truncate">{item.comboDetails.join(' • ')}</p>
                         )}
-                        <div className="font-extrabold text-sm text-[#B91C1C] mt-1">{formatUZS(unit * item.quantity)}</div>
+                        <div className="font-extrabold text-sm text-[#E11D48] mt-1">{formatUZS(unit * item.quantity)}</div>
                       </div>
 
-                      <div className="flex flex-col items-center gap-1 bg-[#F2ECE1] rounded-2xl p-1">
+                      <div className="flex flex-col items-center gap-1 bg-[#141418] rounded-2xl p-1">
                         <button
                           onClick={() =>
                             setCart((prev) =>
@@ -701,7 +703,7 @@ export default function App() {
                           }
                           className="w-7 h-7 flex items-center justify-center"
                         >
-                          {item.quantity === 1 ? <Trash2 className="w-3.5 h-3.5 text-[#B91C1C]" /> : <Minus className="w-3.5 h-3.5" />}
+                          {item.quantity === 1 ? <Trash2 className="w-3.5 h-3.5 text-[#E11D48]" /> : <Minus className="w-3.5 h-3.5" />}
                         </button>
                       </div>
                     </div>
@@ -710,8 +712,8 @@ export default function App() {
               </div>
 
               {/* SMART UPSELL */}
-              <div className="p-4 rounded-3xl bg-[#F2ECE1] space-y-2.5">
-                <div className="text-xs font-extrabold uppercase tracking-wider text-[#0F0F0F]/65">
+              <div className="p-4 rounded-3xl bg-[#141418] space-y-2.5">
+                <div className="text-xs font-extrabold uppercase tracking-wider text-[#F4F4F5]/65">
                   Bunga Coca-Cola yoki Fri ham qo’shamizmi?
                 </div>
                 <div className="flex gap-2.5 overflow-x-auto no-scrollbar">
@@ -722,12 +724,12 @@ export default function App() {
                       <button
                         key={upsell.id}
                         onClick={() => addToCart(upsell, 1, [])}
-                        className="shrink-0 flex items-center gap-2.5 bg-white p-2 pr-3.5 rounded-2xl border border-[#0F0F0F]/10"
+                        className="shrink-0 flex items-center gap-2.5 bg-[#121216] p-2 pr-3.5 rounded-2xl border border-white/10/10"
                       >
                         <img src={upsell.imageUrl} alt={upsell.name} className="w-10 h-10 rounded-xl object-cover" />
                         <div className="text-left">
                           <div className="text-xs font-bold">{upsell.name}</div>
-                          <div className="text-[11px] font-bold text-[#B91C1C]">+ {formatUZS(upsell.price)}</div>
+                          <div className="text-[11px] font-bold text-[#E11D48]">+ {formatUZS(upsell.price)}</div>
                         </div>
                       </button>
                     ))}
@@ -735,17 +737,17 @@ export default function App() {
               </div>
 
               {/* Promo & Summary */}
-              <div className="p-5 rounded-3xl bg-white border border-[#0F0F0F]/10 space-y-3">
+              <div className="p-5 rounded-3xl bg-[#121216] border border-white/10/10 space-y-3">
                 <div className="flex gap-2">
                   <input
                     value={promoInput}
                     onChange={(e) => setPromoInput(e.target.value)}
                     placeholder="Promo-kod (masalan: WELCOME15)"
-                    className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#0F0F0F]/10 text-xs uppercase font-bold"
+                    className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-white/10/10 text-xs uppercase font-bold"
                   />
                   <button
                     onClick={handleApplyPromo}
-                    className="px-4 py-2.5 rounded-xl bg-[#0F0F0F] text-white text-xs font-bold"
+                    className="px-4 py-2.5 rounded-xl bg-[#18181D] text-white text-xs font-bold"
                   >
                     Qo’llash
                   </button>
@@ -758,33 +760,33 @@ export default function App() {
                       type="checkbox"
                       checked={useBonus}
                       onChange={(e) => setUseBonus(e.target.checked)}
-                      className="w-4 h-4 accent-[#B91C1C]"
+                      className="w-4 h-4 accent-[#E11D48]"
                     />
                   </label>
                 )}
 
-                <div className="space-y-1.5 pt-2 border-t border-[#0F0F0F]/10 text-xs">
+                <div className="space-y-1.5 pt-2 border-t border-white/10/10 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-[#0F0F0F]/65">Taomlar summasi:</span>
+                    <span className="text-[#F4F4F5]/65">Taomlar summasi:</span>
                     <span className="font-bold">{formatUZS(cartSubtotal)}</span>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="flex justify-between text-[#B91C1C]">
+                    <div className="flex justify-between text-[#E11D48]">
                       <span>Chegirma ({appliedPromo?.code}):</span>
                       <span className="font-bold">-{formatUZS(discountAmount)}</span>
                     </div>
                   )}
                   {bonusApplied > 0 && (
-                    <div className="flex justify-between text-[#C59B27]">
+                    <div className="flex justify-between text-[#D4AF37]">
                       <span>Bonus ballar:</span>
                       <span className="font-bold">-{formatUZS(bonusApplied)}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-[#0F0F0F]/65">Yetkazib berish:</span>
+                    <span className="text-[#F4F4F5]/65">Yetkazib berish:</span>
                     <span className="font-bold">{deliveryFee === 0 ? 'BEPUL' : formatUZS(deliveryFee)}</span>
                   </div>
-                  <div className="flex justify-between text-base font-extrabold pt-2 border-t border-[#0F0F0F]/10">
+                  <div className="flex justify-between text-base font-extrabold pt-2 border-t border-white/10/10">
                     <span>Jami to’lov:</span>
                     <span>{formatUZS(finalTotal)}</span>
                   </div>
@@ -792,7 +794,7 @@ export default function App() {
 
                 <button
                   onClick={() => setShowCheckout(true)}
-                  className="w-full py-4 rounded-2xl bg-[#B91C1C] text-white font-bold text-sm tracking-wide shadow-luxury"
+                  className="w-full py-4 rounded-2xl bg-[#E11D48] text-white font-bold text-sm tracking-wide shadow-luxury"
                 >
                   BUYURTMANI RASMIYLASHTIRISH
                 </button>
@@ -806,12 +808,12 @@ export default function App() {
       {activeTab === 'profile' && (
         <main className="px-5 pt-5 space-y-6">
           {/* VIP Loyalty Card */}
-          <div className="p-6 rounded-[32px] bg-gradient-to-br from-[#0F0F0F] via-[#1C1917] to-[#292524] text-[#FAF7F2] shadow-luxury space-y-4 border border-[#C59B27]/30">
+          <div className="p-6 rounded-[32px] bg-gradient-to-br from-[#0F0F0F] via-[#1C1917] to-[#292524] text-[#FAF7F2] shadow-luxury space-y-4 border border-[#D4AF37]/30">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-extrabold tracking-[0.2em] text-[#C59B27] uppercase">
+              <span className="text-xs font-extrabold tracking-[0.2em] text-[#D4AF37] uppercase">
                 THE FAST FOOD CLUB
               </span>
-              <span className="px-3 py-1 rounded-full bg-[#C59B27]/20 text-[#C59B27] text-xs font-extrabold flex items-center gap-1">
+              <span className="px-3 py-1 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] text-xs font-extrabold flex items-center gap-1">
                 <Award className="w-3.5 h-3.5" />
                 {userProfile?.loyalty?.tier || 'BRONZE'}
               </span>
@@ -820,7 +822,7 @@ export default function App() {
             <div>
               <div className="text-xs text-white/60">Mavjud bonus balans</div>
               <div className="font-serif text-3xl font-bold text-white mt-0.5">
-                {(userProfile?.loyalty?.points || 0).toLocaleString('ru-RU')} <span className="text-sm text-[#C59B27]">ball</span>
+                {(userProfile?.loyalty?.points || 0).toLocaleString('ru-RU')} <span className="text-sm text-[#D4AF37]">ball</span>
               </div>
             </div>
 
@@ -831,12 +833,12 @@ export default function App() {
           </div>
 
           {/* Active Promo Codes */}
-          <div className="p-4 rounded-3xl bg-[#F2ECE1] flex items-center justify-between">
+          <div className="p-4 rounded-3xl bg-[#141418] flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Tag className="w-5 h-5 text-[#B91C1C]" />
+              <Tag className="w-5 h-5 text-[#E11D48]" />
               <div>
                 <div className="text-xs font-extrabold">WELCOME15</div>
-                <div className="text-[11px] text-[#0F0F0F]/70">Birinchi buyurtmaga 15% chegirma</div>
+                <div className="text-[11px] text-[#F4F4F5]/70">Birinchi buyurtmaga 15% chegirma</div>
               </div>
             </div>
             <button
@@ -844,7 +846,7 @@ export default function App() {
                 setPromoInput('WELCOME15');
                 setActiveTab('cart');
               }}
-              className="px-3 py-1.5 rounded-xl bg-[#0F0F0F] text-white text-xs font-bold"
+              className="px-3 py-1.5 rounded-xl bg-[#18181D] text-white text-xs font-bold"
             >
               Ishlatish
             </button>
@@ -854,20 +856,20 @@ export default function App() {
           <div className="space-y-3">
             <h3 className="font-serif text-xl font-bold">Buyurtmalar tarixi</h3>
             {orders.length === 0 ? (
-              <p className="text-xs text-[#0F0F0F]/60">Hali buyurtmalar mavjud emas.</p>
+              <p className="text-xs text-[#F4F4F5]/60">Hali buyurtmalar mavjud emas.</p>
             ) : (
               orders.map((ord) => (
-                <div key={ord.id} className="p-4 rounded-3xl bg-white border border-[#0F0F0F]/10 space-y-2.5">
+                <div key={ord.id} className="p-4 rounded-3xl bg-[#121216] border border-white/10/10 space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="font-extrabold text-sm">Buyurtma #{ord.orderNumber}</span>
-                    <span className="px-2.5 py-1 rounded-full bg-[#F2ECE1] text-[11px] font-bold">
+                    <span className="px-2.5 py-1 rounded-full bg-[#141418] text-[11px] font-bold">
                       {TRACKING_STEPS.find((s) => s.key === ord.orderStatus)?.label || ord.orderStatus}
                     </span>
                   </div>
-                  <div className="text-xs text-[#0F0F0F]/70">
+                  <div className="text-xs text-[#F4F4F5]/70">
                     {ord.items.map((i) => `${i.name} x${i.quantity}`).join(', ')}
                   </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-[#0F0F0F]/5">
+                  <div className="flex items-center justify-between pt-2 border-t border-white/10/5">
                     <span className="font-bold text-sm">{formatUZS(ord.totalAmount)}</span>
                     <button
                       onClick={() => {
@@ -877,7 +879,7 @@ export default function App() {
                         }
                         setActiveTab('cart');
                       }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0F0F0F] text-white text-xs font-bold"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#18181D] text-white text-xs font-bold"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       Yana buyurtma berish
@@ -903,39 +905,39 @@ export default function App() {
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
-              className="w-full max-w-lg max-h-[92vh] bg-[#FAF7F2] rounded-t-[32px] p-6 overflow-y-auto space-y-4"
+              className="w-full max-w-lg max-h-[92vh] bg-[#09090B] rounded-t-[32px] p-6 overflow-y-auto space-y-4"
             >
               <div className="flex items-center justify-between">
                 <h2 className="font-serif text-2xl font-bold">Buyurtmani tasdiqlash</h2>
-                <button onClick={() => setShowCheckout(false)} className="text-xs font-bold px-3 py-1.5 rounded-full bg-[#F2ECE1]">
+                <button onClick={() => setShowCheckout(false)} className="text-xs font-bold px-3 py-1.5 rounded-full bg-[#141418]">
                   Yopish
                 </button>
               </div>
 
               <div className="space-y-3">
                 <div>
-                  <label className="text-xs font-bold text-[#0F0F0F]/70">Ismingiz</label>
+                  <label className="text-xs font-bold text-[#F4F4F5]/70">Ismingiz</label>
                   <input
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    className="w-full mt-1 px-4 py-3 rounded-2xl bg-white border border-[#0F0F0F]/15 text-sm"
+                    className="w-full mt-1 px-4 py-3 rounded-2xl bg-[#121216] border border-white/10/15 text-sm"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#0F0F0F]/70">Telefon raqam</label>
+                  <label className="text-xs font-bold text-[#F4F4F5]/70">Telefon raqam</label>
                   <div className="relative mt-1">
-                    <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0F0F0F]/45" />
+                    <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#F4F4F5]/45" />
                     <input
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white border border-[#0F0F0F]/15 text-sm"
+                      className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#121216] border border-white/10/15 text-sm"
                     />
                   </div>
                 </div>
                 <div>
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-[#0F0F0F]/70">Yetkazib berish manzili</label>
-                    <button onClick={detectLocation} className="inline-flex items-center gap-1 text-xs font-bold text-[#B91C1C]">
+                    <label className="text-xs font-bold text-[#F4F4F5]/70">Yetkazib berish manzili</label>
+                    <button onClick={detectLocation} className="inline-flex items-center gap-1 text-xs font-bold text-[#E11D48]">
                       <Navigation className="w-3.5 h-3.5" />
                       GPS aniqlash
                     </button>
@@ -943,26 +945,26 @@ export default function App() {
                   <input
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    className="w-full mt-1 px-4 py-3 rounded-2xl bg-white border border-[#0F0F0F]/15 text-sm"
+                    className="w-full mt-1 px-4 py-3 rounded-2xl bg-[#121216] border border-white/10/15 text-sm"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#0F0F0F]/70">Kuryer uchun izoh (ixtiyoriy)</label>
+                  <label className="text-xs font-bold text-[#F4F4F5]/70">Kuryer uchun izoh (ixtiyoriy)</label>
                   <input
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Masalan: 2-kirish yo’lagi, domofon 45"
-                    className="w-full mt-1 px-4 py-3 rounded-2xl bg-white border border-[#0F0F0F]/15 text-sm"
+                    className="w-full mt-1 px-4 py-3 rounded-2xl bg-[#121216] border border-white/10/15 text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-[#0F0F0F]/70">To’lov usuli</label>
+                  <label className="text-xs font-bold text-[#F4F4F5]/70">To’lov usuli</label>
                   <div className="grid grid-cols-2 gap-2.5 mt-1.5">
                     <button
                       onClick={() => setPaymentMethod('CASH')}
                       className={`py-3 rounded-2xl text-xs font-bold border ${
-                        paymentMethod === 'CASH' ? 'bg-[#0F0F0F] text-white border-[#0F0F0F]' : 'bg-white border-[#0F0F0F]/15'
+                        paymentMethod === 'CASH' ? 'bg-[#18181D] text-white border-white/10' : 'bg-[#121216] border-white/10/15'
                       }`}
                     >
                       Naqd pul
@@ -971,8 +973,8 @@ export default function App() {
                       onClick={() => setPaymentMethod('CARD_ON_DELIVERY')}
                       className={`py-3 rounded-2xl text-xs font-bold border ${
                         paymentMethod === 'CARD_ON_DELIVERY'
-                          ? 'bg-[#0F0F0F] text-white border-[#0F0F0F]'
-                          : 'bg-white border-[#0F0F0F]/15'
+                          ? 'bg-[#18181D] text-white border-white/10'
+                          : 'bg-[#121216] border-white/10/15'
                       }`}
                     >
                       Yetkazishda karta
@@ -984,7 +986,7 @@ export default function App() {
               <button
                 disabled={submittingOrder}
                 onClick={submitOrder}
-                className="w-full py-4 rounded-2xl bg-[#B91C1C] text-white font-bold text-sm shadow-luxury disabled:opacity-50"
+                className="w-full py-4 rounded-2xl bg-[#E11D48] text-white font-bold text-sm shadow-luxury disabled:opacity-50"
               >
                 {submittingOrder ? 'YUBORILMOQDA...' : `TASDIQLASH - ${formatUZS(finalTotal)}`}
               </button>
@@ -1005,11 +1007,11 @@ export default function App() {
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
-              className="w-full max-w-sm bg-[#FAF7F2] rounded-[32px] p-7 text-center space-y-4"
+              className="w-full max-w-sm bg-[#09090B] rounded-[32px] p-7 text-center space-y-4"
             >
               <CheckCircle2 className="w-16 h-16 mx-auto text-emerald-600" />
               <h3 className="font-serif text-2xl font-bold">Buyurtma qabul qilindi!</h3>
-              <p className="text-xs text-[#0F0F0F]/75 leading-relaxed">
+              <p className="text-xs text-[#F4F4F5]/75 leading-relaxed">
                 Buyurtma raqamingiz: <strong>#{orderSuccessModal.orderNumber}</strong>. Oshxonamiz taomingizni tayyorlashni boshladi!
               </p>
               <button
@@ -1017,7 +1019,7 @@ export default function App() {
                   setOrderSuccessModal(null);
                   setActiveTab('home');
                 }}
-                className="w-full py-3.5 rounded-2xl bg-[#0F0F0F] text-white font-bold text-xs"
+                className="w-full py-3.5 rounded-2xl bg-[#18181D] text-white font-bold text-xs"
               >
                 JONLI KUZATISHGA O’TISH
               </button>
@@ -1062,7 +1064,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* BOTTOM NAVIGATION */}
-      <nav className="fixed bottom-0 inset-x-0 max-w-lg mx-auto z-30 bg-[#FAF7F2]/95 backdrop-blur-xl border-t border-[#0F0F0F]/10 px-4 py-2.5 flex items-center justify-around">
+      <nav className="fixed bottom-0 inset-x-0 max-w-lg mx-auto z-30 bg-[#09090B]/95 backdrop-blur-xl border-t border-white/10/10 px-4 py-2.5 flex items-center justify-around">
         {[
           { id: 'home', icon: Home, label: 'Asosiy' },
           { id: 'catalog', icon: LayoutGrid, label: 'Katalog' },
@@ -1080,13 +1082,13 @@ export default function App() {
                 setActiveTab(tab.id as typeof activeTab);
               }}
               className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all ${
-                active ? 'text-[#B91C1C]' : 'text-[#0F0F0F]/55'
+                active ? 'text-[#E11D48]' : 'text-[#F4F4F5]/55'
               }`}
             >
               <Icon className="w-5 h-5" />
               <span className="text-[10px] font-bold">{tab.label}</span>
               {Boolean(tab.badge && tab.badge > 0) && (
-                <span className="absolute -top-0.5 right-1 w-4 h-4 rounded-full bg-[#B91C1C] text-white text-[10px] font-extrabold flex items-center justify-center">
+                <span className="absolute -top-0.5 right-1 w-4 h-4 rounded-full bg-[#E11D48] text-white text-[10px] font-extrabold flex items-center justify-center">
                   {tab.badge}
                 </span>
               )}
@@ -1121,9 +1123,9 @@ function ProductCard({
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-white rounded-[28px] overflow-hidden border border-[#0F0F0F]/5 shadow-sm hover:shadow-luxury transition-shadow"
+      className="bg-[#121216] rounded-[28px] overflow-hidden border border-white/10/5 shadow-sm hover:shadow-luxury transition-shadow"
     >
-      <div onClick={onOpen} className="relative h-56 overflow-hidden cursor-pointer bg-[#F2ECE1]">
+      <div onClick={onOpen} className="relative h-56 overflow-hidden cursor-pointer bg-[#141418]">
         <img
           src={product.imageUrl}
           alt={product.name}
@@ -1131,12 +1133,12 @@ function ProductCard({
         />
         <div className="absolute top-3.5 left-3.5 flex gap-1.5">
           {discountPct > 0 && (
-            <span className="px-2.5 py-1 rounded-full bg-[#B91C1C] text-white text-[11px] font-extrabold">
+            <span className="px-2.5 py-1 rounded-full bg-[#E11D48] text-white text-[11px] font-extrabold">
               -{discountPct}%
             </span>
           )}
           {product.isNew && (
-            <span className="px-2.5 py-1 rounded-full bg-[#0F0F0F] text-[#C59B27] text-[11px] font-extrabold">
+            <span className="px-2.5 py-1 rounded-full bg-[#18181D] text-[#D4AF37] text-[11px] font-extrabold">
               YANGI
             </span>
           )}
@@ -1147,37 +1149,37 @@ function ProductCard({
             e.stopPropagation();
             onToggleFavorite(product.id);
           }}
-          className="absolute top-3.5 right-3.5 w-10 h-10 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center shadow"
+          className="absolute top-3.5 right-3.5 w-10 h-10 rounded-full bg-[#141418]/90 backdrop-blur-md flex items-center justify-center shadow"
         >
-          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-[#B91C1C] text-[#B91C1C]' : 'text-[#0F0F0F]'}`} />
+          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-[#E11D48] text-[#E11D48]' : 'text-[#F4F4F5]'}`} />
         </button>
 
         <span className="absolute bottom-3 left-3.5 px-2.5 py-1 rounded-full bg-black/65 backdrop-blur-md text-white text-[11px] font-semibold flex items-center gap-1">
-          <Clock className="w-3 h-3 text-[#C59B27]" />
+          <Clock className="w-3 h-3 text-[#D4AF37]" />
           {product.preparationTime} daq
         </span>
       </div>
 
       <div className="p-5 space-y-3">
         <div onClick={onOpen} className="cursor-pointer">
-          <h4 className="font-serif text-xl font-bold text-[#0F0F0F]">{product.name}</h4>
-          <p className="text-xs text-[#0F0F0F]/65 line-clamp-2 mt-1 leading-relaxed">{product.description}</p>
+          <h4 className="font-serif text-xl font-bold text-[#F4F4F5]">{product.name}</h4>
+          <p className="text-xs text-[#F4F4F5]/65 line-clamp-2 mt-1 leading-relaxed">{product.description}</p>
         </div>
 
         <div className="flex items-center justify-between pt-1">
           <div>
             {product.oldPrice && product.oldPrice > product.price && (
-              <div className="text-xs line-through text-[#0F0F0F]/40">{formatUZS(product.oldPrice)}</div>
+              <div className="text-xs line-through text-[#F4F4F5]/40">{formatUZS(product.oldPrice)}</div>
             )}
-            <div className="text-lg font-extrabold text-[#0F0F0F]">{formatUZS(product.price)}</div>
+            <div className="text-lg font-extrabold text-[#F4F4F5]">{formatUZS(product.price)}</div>
           </div>
 
           <motion.button
             whileTap={{ scale: 0.93 }}
             onClick={onQuickAdd}
-            className="px-5 py-3 rounded-2xl bg-[#0F0F0F] text-[#FAF7F2] font-bold text-xs tracking-wide flex items-center gap-1.5 shadow"
+            className="px-5 py-3 rounded-2xl bg-[#18181D] text-[#FAF7F2] font-bold text-xs tracking-wide flex items-center gap-1.5 shadow"
           >
-            <Plus className="w-4 h-4 text-[#C59B27]" />
+            <Plus className="w-4 h-4 text-[#D4AF37]" />
             QO’SHISH
           </motion.button>
         </div>

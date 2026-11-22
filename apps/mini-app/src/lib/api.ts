@@ -1,3 +1,4 @@
+import { soundFX } from './sound';
 const API_URL = import.meta.env.VITE_API_URL || 'https://uzfastfood.onrender.com/api';
 
 declare global {
@@ -37,6 +38,9 @@ export function getTelegramHeaders(): Record<string, string> {
 
 export function haptic(style: 'light' | 'medium' | 'heavy' = 'light') {
   window.Telegram?.WebApp?.HapticFeedback?.impactOccurred(style);
+  if (style === 'light') soundFX.playClick();
+  else if (style === 'medium') soundFX.playAdd();
+  else if (style === 'heavy') soundFX.playSuccess();
 }
 
 export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
