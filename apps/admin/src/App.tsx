@@ -34,18 +34,18 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://uzfastfood.onrender.com
 const WS_URL = import.meta.env.VITE_WS_URL || 'https://uzfastfood.onrender.com';
 
 const STATUS_OPTIONS = [
-  { value: 'PENDING', label: \'Qabul qilindi', color: \'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+  { value: 'PENDING’, label: \'Qabul qilindi', color: \'bg-amber-500/20 text-amber-300 border-amber-500/30' },
   { value: 'CONFIRMED', label: \'Tasdiqlandi', color: \'bg-blue-500/20 text-blue-300 border-blue-500/30' },
-  { value: 'PREPARING', label: \'Tayyorlanmoqda', color: \'bg-purple-500/20 text-purple-300 border-purple-500/30' },
+  { value: 'PREPARING’, label: \'Tayyorlanmoqda', color: \'bg-purple-500/20 text-purple-300 border-purple-500/30' },
   { value: 'READY', label: \'Tayyor', color: \'bg-cyan-500/20 text-cyan-300 border-cyan-500/30' },
   { value: 'COURIER_ASSIGNED', label: \'Kuryerda', color: \'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' },
-  { value: 'ON_THE_WAY', label: \'Yo'lda', color: \'bg-orange-500/20 text-orange-300 border-orange-500/30' },
+  { value: 'ON_THE_WAY', label: \'Yo’lda', color: \'bg-orange-500/20 text-orange-300 border-orange-500/30' },
   { value: 'DELIVERED', label: \'Yetkazildi', color: \'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
   { value: 'CANCELLED', label: \'Bekor qilindi', color: \'bg-rose-500/20 text-rose-300 border-rose-500/30' },
 ];
 
 function fmt(n: number) {
-  return `${Math.round(n || 0).toLocaleString('ru-RU')} so\'m`;
+  return `${Math.round(n || 0).toLocaleString('ru-RU')} so’m`;
 }
 
 export default function App() {
@@ -179,7 +179,7 @@ export default function App() {
           <div>
             <div className="text-xs font-extrabold tracking-[0.25em] text-[#C59B27] uppercase">THE FAST FOOD</div>
             <h1 className="text-2xl font-bold mt-1">Admin Command Center</h1>
-            <p className="text-xs text-slate-400 mt-1">Boshqaruv paneliga kirish uchun ma'lumotlarni kiriting</p>
+            <p className="text-xs text-slate-400 mt-1">Boshqaruv paneliga kirish uchun ma’lumotlarni kiriting</p>
           </div>
           {loginError && <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs">{loginError}</div>}
           <div>
@@ -264,8 +264,8 @@ export default function App() {
           <>
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-extrabold">Biznes ko'rsatkichlari</h1>
-                <p className="text-xs text-slate-400">Real vaqt rejimidagi PostgreSQL ma'lumotlari</p>
+                <h1 className="text-2xl font-extrabold">Biznes ko’rsatkichlari</h1>
+                <p className="text-xs text-slate-400">Real vaqt rejimidagi PostgreSQL ma’lumotlari</p>
               </div>
               <button
                 onClick={exportCSV}
@@ -278,10 +278,10 @@ export default function App() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: 'Bugungi savdo', val: fmt(dashboardData.metrics.todayRevenue), icon: DollarSign, color: \'text-emerald-400' },
+                { label: 'Bugungi savdo’, val: fmt(dashboardData.metrics.todayRevenue), icon: DollarSign, color: \'text-emerald-400' },
                 { label: 'Umumiy daromad', val: fmt(dashboardData.metrics.totalRevenue), icon: TrendingUp, color: \'text-[#C59B27]' },
                 { label: 'Jami buyurtmalar', val: `${dashboardData.metrics.totalOrders} ta`, icon: ShoppingBag, color: \'text-blue-400' },
-                { label: 'O\'rtacha chek', val: fmt(dashboardData.metrics.avgOrderValue), icon: CheckCircle2, color: \'text-purple-400' },
+                { label: 'O’rtacha chek', val: fmt(dashboardData.metrics.avgOrderValue), icon: CheckCircle2, color: \'text-purple-400' },
                 { label: 'Yangi buyurtmalar', val: `${dashboardData.metrics.pendingOrders} ta`, icon: Clock, color: \'text-amber-400' },
                 { label: 'Tayyorlanmoqda', val: `${dashboardData.metrics.preparingOrders} ta`, icon: UtensilsCrossed, color: \'text-orange-400' },
                 { label: 'Yetkazilgan', val: `${dashboardData.metrics.deliveredOrders} ta`, icon: CheckCircle2, color: \'text-emerald-400' },
@@ -302,7 +302,7 @@ export default function App() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 p-6 rounded-2xl bg-[#14161A] border border-white/10">
-                <h3 className="text-sm font-bold mb-4">So'nggi 7 kunlik daromad dinamikasi</h3>
+                <h3 className="text-sm font-bold mb-4">So’nggi 7 kunlik daromad dinamikasi</h3>
                 <div className="h-72">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={dashboardData.chartData}>
@@ -346,7 +346,7 @@ export default function App() {
                     <th className="p-4">Taomlar</th>
                     <th className="p-4">Summa</th>
                     <th className="p-4">Manzil</th>
-                    <th className="p-4">Holatni o'zgartirish</th>
+                    <th className="p-4">Holatni o’zgartirish</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -427,7 +427,7 @@ export default function App() {
               <input
                 required
                 type="number"
-                placeholder="Narxi (so'm)"
+                placeholder="Narxi (so’m)"
                 value={newProd.price}
                 onChange={(e) => setNewProd({ ...newProd, price: e.target.value })}
                 className="px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs"
@@ -447,7 +447,7 @@ export default function App() {
                 className="px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs"
               />
               <button type="submit" className="px-4 py-2.5 rounded-xl bg-[#B91C1C] font-bold text-xs flex items-center justify-center gap-2">
-                <Plus className="w-4 h-4" /> Mahsulot qo'shish
+                <Plus className="w-4 h-4" /> Mahsulot qo’shish
               </button>
             </form>
 
@@ -491,7 +491,7 @@ export default function App() {
               <input required placeholder="Kategoriya nomi" value={newCat.name} onChange={(e) => setNewCat({ ...newCat, name: e.target.value })} className="px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs" />
               <input required placeholder="Rasm URL" value={newCat.imageUrl} onChange={(e) => setNewCat({ ...newCat, imageUrl: e.target.value })} className="px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs" />
               <input placeholder="Tavsif" value={newCat.description} onChange={(e) => setNewCat({ ...newCat, description: e.target.value })} className="px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs" />
-              <button type="submit" className="px-4 py-2.5 rounded-xl bg-[#B91C1C] font-bold text-xs">Qo'shish</button>
+              <button type="submit" className="px-4 py-2.5 rounded-xl bg-[#B91C1C] font-bold text-xs">Qo’shish</button>
             </form>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {categories.map((c) => (
@@ -529,7 +529,7 @@ export default function App() {
               <input required placeholder="Sarlavha" value={newPromo.title} onChange={(e) => setNewPromo({ ...newPromo, title: e.target.value })} className="px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs" />
               <select value={newPromo.discountType} onChange={(e) => setNewPromo({ ...newPromo, discountType: e.target.value })} className="px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs">
                 <option value="PERCENTAGE">Foiz (%)</option>
-                <option value="FIXED">Summa (so'm)</option>
+                <option value="FIXED">Summa (so’m)</option>
               </select>
               <input required type="number" placeholder="Qiymati" value={newPromo.discountValue} onChange={(e) => setNewPromo({ ...newPromo, discountValue: e.target.value })} className="px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs" />
               <button type="submit" className="px-4 py-2.5 rounded-xl bg-[#B91C1C] font-bold text-xs">Yaratish</button>
@@ -548,7 +548,7 @@ export default function App() {
                     }}
                     className={`px-3 py-1 rounded-lg text-xs font-bold ${p.isActive ? 'bg-emerald-500/20 text-emerald-300' : \'bg-slate-700 text-slate-300'}`}
                   >
-                    {p.isActive ? 'Faol' : \'O'chirilgan'}
+                    {p.isActive ? 'Faol' : \'O’chirilgan'}
                   </button>
                 </div>
               ))}
@@ -605,7 +605,7 @@ export default function App() {
               <input required placeholder="Filial nomi" value={newBranch.name} onChange={(e) => setNewBranch({ ...newBranch, name: e.target.value })} className="px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs" />
               <input required placeholder="Manzil" value={newBranch.address} onChange={(e) => setNewBranch({ ...newBranch, address: e.target.value })} className="px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs" />
               <input required placeholder="Telefon" value={newBranch.phone} onChange={(e) => setNewBranch({ ...newBranch, phone: e.target.value })} className="px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs" />
-              <button type="submit" className="px-4 py-2.5 rounded-xl bg-[#B91C1C] font-bold text-xs">Filial qo'shish</button>
+              <button type="submit" className="px-4 py-2.5 rounded-xl bg-[#B91C1C] font-bold text-xs">Filial qo’shish</button>
             </form>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {branches.map((b) => (
@@ -637,11 +637,11 @@ export default function App() {
                 <input value={settings.deliveryZone} onChange={(e) => setSettings({ ...settings, deliveryZone: e.target.value })} className="w-full mt-1 px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Yetkazib berish narxi (so'm)</label>
+                <label className="text-xs text-slate-400">Yetkazib berish narxi (so’m)</label>
                 <input type="number" value={settings.deliveryFee} onChange={(e) => setSettings({ ...settings, deliveryFee: e.target.value })} className="w-full mt-1 px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Bepul yetkazish chegarasi (so'm)</label>
+                <label className="text-xs text-slate-400">Bepul yetkazish chegarasi (so’m)</label>
                 <input type="number" value={settings.freeDeliveryThreshold} onChange={(e) => setSettings({ ...settings, freeDeliveryThreshold: e.target.value })} className="w-full mt-1 px-3.5 py-2.5 rounded-xl bg-[#0B0C0E] border border-white/10 text-xs" />
               </div>
               <div>

@@ -56,7 +56,7 @@ export const ComboBuilder: React.FC<ComboBuilderProps> = ({ products, onClose, o
               <Sparkles className="w-4 h-4" />
               SMART COMBO BUILDER • -10% TEJAMKORLIK
             </div>
-            <h2 className="font-serif text-2xl font-bold mt-0.5">O'z Combo menyuingizni tuzing</h2>
+            <h2 className="font-serif text-2xl font-bold mt-0.5">O’z Combo menyuingizni tuzing</h2>
           </div>
           <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
             <X className="w-5 h-5" />
@@ -155,7 +155,7 @@ export const ComboBuilder: React.FC<ComboBuilderProps> = ({ products, onClose, o
             onClick={handleConfirm}
             className="w-full py-4 rounded-2xl bg-[#B91C1C] text-white font-bold text-sm shadow-luxury flex items-center justify-between px-6"
           >
-            <span>COMBO QO'SHISH (-10%)</span>
+            <span>COMBO QO’SHISH (-10%)</span>
             <div className="text-right">
               <span className="line-through text-xs text-white/60 mr-2">{formatUZS(rawTotal)}</span>
               <span>{formatUZS(finalPrice)}</span>

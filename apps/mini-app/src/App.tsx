@@ -22,7 +22,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { apiFetch, formatUZS, haptic } from './lib/api';
-import { Onboarding } from './components/Onboarding';
+import { Onboarding } from './components/Onboarding’;
 import { ProductItem, ProductSheet, CustomizationOpt } from './components/ProductSheet';
 import { ComboBuilder } from './components/ComboBuilder';
 import { StoryItem, StoryViewer } from './components/StoryViewer';
@@ -67,25 +67,25 @@ const STORIES: StoryItem[] = [
     badge: 'NEW DROP',
     image: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=1000&q=85',
     headline: 'Double Truffle Cheeseburger',
-    description: 'Ikki hissa marmar mol go\'shti va maxsus trufel sousi uyg'unligi.',
-    ctaText: 'HOZIROQ SINAB KO\'RISH',
+    description: 'Ikki hissa marmar mol go’shti va maxsus trufel sousi uyg’unligi.',
+    ctaText: 'HOZIROQ SINAB KO’RISH',
   },
   {
     id: 's2',
     title: 'CHEGIRMALAR',
-    badge: '-15% PROMO',
+    badge: '-15% PROMO’,
     image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=1000&q=85',
     headline: 'WELCOME15 promo-kodi faol!',
     description: 'Ilova orqali ilk buyurtmangizga 15% chegirma oling.',
-    ctaText: 'KATALOGGA O\'TISH',
+    ctaText: 'KATALOGGA O’TISH',
   },
   {
     id: 's3',
-    title: 'SMART COMBO',
-    badge: '10% TEJANG',
+    title: 'SMART COMBO’,
+    badge: '10% TEJANG’,
     image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=1000&q=85',
-    headline: 'O\'z Combo menyuingizni yarating',
-    description: 'Burger + Fri + Ichimlik tanlang va avtomatik 10% chegirmaga ega bo\'ling.',
+    headline: 'O’z Combo menyuingizni yarating’,
+    description: 'Burger + Fri + Ichimlik tanlang va avtomatik 10% chegirmaga ega bo’ling.',
     ctaText: 'COMBO TUZISH',
   },
   {
@@ -94,24 +94,24 @@ const STORIES: StoryItem[] = [
     badge: '5% CASHBACK',
     image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=85',
     headline: 'Har bir xariddan 5% keshbek',
-    description: 'Yig\'ilgan ballarni keyingi buyurtmalarda naqd puldek ishlating.',
-    ctaText: 'PROFILNI KO\'RISH',
+    description: 'Yig’ilgan ballarni keyingi buyurtmalarda naqd puldek ishlating.',
+    ctaText: 'PROFILNI KO’RISH',
   },
 ];
 
 const TRACKING_STEPS = [
-  { key: 'PENDING', label: \'Buyurtma qabul qilindi' },
+  { key: 'PENDING’, label: \'Buyurtma qabul qilindi' },
   { key: 'CONFIRMED', label: \'Tasdiqlandi' },
-  { key: 'PREPARING', label: \'Tayyorlanmoqda' },
+  { key: 'PREPARING’, label: \'Tayyorlanmoqda' },
   { key: 'READY', label: \'Tayyor' },
-  { key: 'ON_THE_WAY', label: \'Yo'lda' },
+  { key: 'ON_THE_WAY', label: \'Yo’lda' },
   { key: 'DELIVERED', label: \'Yetkazildi' },
 ];
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem('tff_onboarding_seen'));
-  const [activeTab, setActiveTab] = useState<'home' | \'catalog' | \'favorites' | \'cart' | \'profile'>(\'home');
+  const [activeTab, setActiveTab] = useState<'home' | \'catalog’ | \'favorites' | \'cart' | \'profile'>(\'home');
 
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [products, setProducts] = useState<ProductItem[]>([]);
@@ -225,7 +225,7 @@ export default function App() {
     overrideUnitPrice?: number
   ) => {
     haptic('medium');
-    const uid = `${product.id}_${customizations.map((c) => c.id).join('-')}_${isCombo ? \'combo' : \'std'}`;
+    const uid = `${product.id}_${customizations.map((c) => c.id).join('-')}_${isCombo ? \'combo’ : \'std'}`;
     setCart((prev) => {
       const existing = prev.find((i) => i.uid === uid);
       if (existing) {
@@ -290,7 +290,7 @@ export default function App() {
 
   const detectLocation = () => {
     if (!navigator.geolocation) {
-      alert('Qurilmangiz geolokatsiyani qo\'llab-quvvatlamaydi');
+      alert('Qurilmangiz geolokatsiyani qo’llab-quvvatlamaydi');
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -305,7 +305,7 @@ export default function App() {
 
   const submitOrder = async () => {
     if (!customerName.trim() || phone.trim().length < 9 || address.trim().length < 5) {
-      alert('Iltimos, ism, telefon raqam va manzilni to\'liq kiriting');
+      alert('Iltimos, ism, telefon raqam va manzilni to’liq kiriting’);
       return;
     }
     setSubmittingOrder(true);
@@ -478,10 +478,10 @@ export default function App() {
               <span className="inline-block px-3 py-1 rounded-full bg-[#C59B27] text-[#0F0F0F] text-[10px] font-extrabold tracking-widest uppercase">
                 CHEF SIGNATURE
               </span>
-              <h2 className="font-serif text-3xl font-bold leading-tight">BUGUN O'ZINGIZNI SIYLANG!</h2>
-              <p className="text-xs text-white/80">Sevimli ta'mingizni bir bosishda issiqqina buyurtma qiling.</p>
+              <h2 className="font-serif text-3xl font-bold leading-tight">BUGUN O’ZINGIZNI SIYLANG!</h2>
+              <p className="text-xs text-white/80">Sevimli ta’mingizni bir bosishda issiqqina buyurtma qiling.</p>
               <button
-                onClick={() => setActiveTab('catalog')}
+                onClick={() => setActiveTab('catalog’)}
                 className="mt-2 px-6 py-3 rounded-2xl bg-[#B91C1C] text-white font-bold text-xs tracking-wider uppercase shadow-lg"
               >
                 BUYURTMA BERISH
@@ -499,7 +499,7 @@ export default function App() {
                 <Sparkles className="w-3.5 h-3.5" />
                 SMART COMBO BUILDER
               </div>
-              <h3 className="font-serif text-xl font-bold text-[#0F0F0F]">O'z Combo menyuingizni tuzing</h3>
+              <h3 className="font-serif text-xl font-bold text-[#0F0F0F]">O’z Combo menyuingizni tuzing</h3>
               <p className="text-xs text-[#0F0F0F]/70">Taom + Fri + Ichimlik tanlang va 10% tejang!</p>
             </div>
             <div className="w-12 h-12 rounded-2xl bg-[#0F0F0F] text-[#C59B27] flex items-center justify-center shrink-0">
@@ -511,7 +511,7 @@ export default function App() {
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-serif text-2xl font-bold">Eng mashhur taomlar</h3>
-              <button onClick={() => setActiveTab('catalog')} className="text-xs font-bold text-[#B91C1C]">
+              <button onClick={() => setActiveTab('catalog’)} className="text-xs font-bold text-[#B91C1C]">
                 Barchasi в†'
               </button>
             </div>
@@ -533,7 +533,7 @@ export default function App() {
       )}
 
       {/* TAB 2: CATALOG */}
-      {activeTab === 'catalog' && (
+      {activeTab === 'catalog’ && (
         <main className="px-5 pt-4 space-y-5">
           {/* Search */}
           <div className="relative">
@@ -584,7 +584,7 @@ export default function App() {
               onChange={(e) => setSortBy(e.target.value as 'popular' | \'price_asc' | \'price_desc')}
               className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white border border-[#0F0F0F]/10"
             >
-              <option value="popular">Mashhurlik bo'yicha</option>
+              <option value="popular">Mashhurlik bo’yicha</option>
               <option value="price_asc">Arzonroq avval</option>
               <option value="price_desc">Qimmatroq avval</option>
             </select>
@@ -612,12 +612,12 @@ export default function App() {
           {products.filter((p) => favoriteIds.includes(p.id)).length === 0 ? (
             <div className="p-10 text-center bg-[#F2ECE1] rounded-3xl space-y-3">
               <Heart className="w-10 h-10 mx-auto text-[#B91C1C]/60" />
-              <p className="text-sm font-semibold text-[#0F0F0F]/70">Hali sevimli taomlar qo'shilmagan</p>
+              <p className="text-sm font-semibold text-[#0F0F0F]/70">Hali sevimli taomlar qo’shilmagan</p>
               <button
-                onClick={() => setActiveTab('catalog')}
+                onClick={() => setActiveTab('catalog’)}
                 className="px-5 py-2.5 rounded-xl bg-[#0F0F0F] text-white text-xs font-bold"
               >
-                Menyuni ko'rish
+                Menyuni ko’rish
               </button>
             </div>
           ) : (
@@ -647,9 +647,9 @@ export default function App() {
           {cart.length === 0 ? (
             <div className="p-10 text-center bg-[#F2ECE1] rounded-3xl space-y-3">
               <ShoppingBag className="w-10 h-10 mx-auto text-[#0F0F0F]/40" />
-              <p className="text-sm font-semibold text-[#0F0F0F]/70">Savatchangiz hozircha bo'sh</p>
+              <p className="text-sm font-semibold text-[#0F0F0F]/70">Savatchangiz hozircha bo’sh</p>
               <button
-                onClick={() => setActiveTab('catalog')}
+                onClick={() => setActiveTab('catalog’)}
                 className="px-6 py-3 rounded-2xl bg-[#B91C1C] text-white text-xs font-bold"
               >
                 TAOM TANLASH
@@ -712,7 +712,7 @@ export default function App() {
               {/* SMART UPSELL */}
               <div className="p-4 rounded-3xl bg-[#F2ECE1] space-y-2.5">
                 <div className="text-xs font-extrabold uppercase tracking-wider text-[#0F0F0F]/65">
-                  Bunga Coca-Cola yoki Fri ham qo'shamizmi?
+                  Bunga Coca-Cola yoki Fri ham qo’shamizmi?
                 </div>
                 <div className="flex gap-2.5 overflow-x-auto no-scrollbar">
                   {products
@@ -747,7 +747,7 @@ export default function App() {
                     onClick={handleApplyPromo}
                     className="px-4 py-2.5 rounded-xl bg-[#0F0F0F] text-white text-xs font-bold"
                   >
-                    Qo'llash
+                    Qo’llash
                   </button>
                 </div>
 
@@ -785,7 +785,7 @@ export default function App() {
                     <span className="font-bold">{deliveryFee === 0 ? 'BEPUL' : formatUZS(deliveryFee)}</span>
                   </div>
                   <div className="flex justify-between text-base font-extrabold pt-2 border-t border-[#0F0F0F]/10">
-                    <span>Jami to'lov:</span>
+                    <span>Jami to’lov:</span>
                     <span>{formatUZS(finalTotal)}</span>
                   </div>
                 </div>
@@ -951,13 +951,13 @@ export default function App() {
                   <input
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    placeholder="Masalan: 2-kirish yo'lagi, domofon 45"
+                    placeholder="Masalan: 2-kirish yo’lagi, domofon 45"
                     className="w-full mt-1 px-4 py-3 rounded-2xl bg-white border border-[#0F0F0F]/15 text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-[#0F0F0F]/70">To'lov usuli</label>
+                  <label className="text-xs font-bold text-[#0F0F0F]/70">To’lov usuli</label>
                   <div className="grid grid-cols-2 gap-2.5 mt-1.5">
                     <button
                       onClick={() => setPaymentMethod('CASH')}
@@ -1019,7 +1019,7 @@ export default function App() {
                 }}
                 className="w-full py-3.5 rounded-2xl bg-[#0F0F0F] text-white font-bold text-xs"
               >
-                JONLI KUZATISHGA O'TISH
+                JONLI KUZATISHGA O’TISH
               </button>
             </motion.div>
           </motion.div>
@@ -1056,7 +1056,7 @@ export default function App() {
           <StoryViewer
             story={activeStory}
             onClose={() => setActiveStory(null)}
-            onAction={() => setActiveTab('catalog')}
+            onAction={() => setActiveTab('catalog’)}
           />
         )}
       </AnimatePresence>
@@ -1065,7 +1065,7 @@ export default function App() {
       <nav className="fixed bottom-0 inset-x-0 max-w-lg mx-auto z-30 bg-[#FAF7F2]/95 backdrop-blur-xl border-t border-[#0F0F0F]/10 px-4 py-2.5 flex items-center justify-around">
         {[
           { id: 'home', icon: Home, label: \'Asosiy' },
-          { id: 'catalog', icon: LayoutGrid, label: \'Katalog' },
+          { id: 'catalog’, icon: LayoutGrid, label: \'Katalog’ },
           { id: 'favorites', icon: Heart, label: \'Sevimli' },
           { id: 'cart', icon: ShoppingBag, label: \'Savatcha', badge: cart.reduce((s, i) => s + i.quantity, 0) },
           { id: 'profile', icon: UserIcon, label: \'Profil' },
@@ -1178,7 +1178,7 @@ function ProductCard({
             className="px-5 py-3 rounded-2xl bg-[#0F0F0F] text-[#FAF7F2] font-bold text-xs tracking-wide flex items-center gap-1.5 shadow"
           >
             <Plus className="w-4 h-4 text-[#C59B27]" />
-            QO'SHISH
+            QO’SHISH
           </motion.button>
         </div>
       </div>

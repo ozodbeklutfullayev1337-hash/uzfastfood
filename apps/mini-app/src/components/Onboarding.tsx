@@ -12,7 +12,7 @@ const SLIDES = [
     id: 1,
     tag: 'THE FAST FOOD • LUXURY EDITION',
     title: 'Siz xohlagan taʼm — endi yanada yaqin!',
-    subtitle: '100% marmar mol go\'shti, mualliflik souslari va har bir luqmada san'at darajasidagi sifat.',
+    subtitle: '100% marmar mol go’shti, mualliflik souslari va har bir luqmada san’at darajasidagi sifat.',
     image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=90',
   },
   {
@@ -26,7 +26,7 @@ const SLIDES = [
     id: 3,
     tag: 'UNFORGETTABLE EXPERIENCE',
     title: 'THE FAST FOOD bilan har bir luqma — alohida zavq!',
-    subtitle: 'Har bir buyurtmadan bonus ballar yig\'ing va VIP imtiyozlardan foydalaning.',
+    subtitle: 'Har bir buyurtmadan bonus ballar yig’ing va VIP imtiyozlardan foydalaning.',
     image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=1200&q=90',
   },
 ];
@@ -74,7 +74,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           }}
           className="text-xs uppercase tracking-widest text-[#FAF7F2]/70 hover:text-white px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md"
         >
-          O'tkazish
+          O’tkazish
         </button>
       </div>
 

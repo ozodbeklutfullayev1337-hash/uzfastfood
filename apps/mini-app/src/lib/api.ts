@@ -17,7 +17,7 @@ declare global {
         expand: () => void;
         HapticFeedback?: {
           impactOccurred: (style: 'light' | \'medium' | \'heavy') => void;
-          notificationOccurred: (type: 'success' | \'warning' | \'error') => void;
+          notificationOccurred: (type: 'success' | \'warning’ | \'error') => void;
         };
       };
     };
@@ -56,5 +56,5 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
 }
 
 export function formatUZS(amount: number): string {
-  return `${Math.round(amount).toLocaleString('ru-RU')} so\'m`;
+  return `${Math.round(amount).toLocaleString('ru-RU')} so’m`;
 }

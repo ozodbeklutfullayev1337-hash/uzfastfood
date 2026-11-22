@@ -20,7 +20,7 @@ router.post("/login", async (req, res) => {
       admin: { id: admin.id, login: admin.login, fullName: admin.fullName, role: admin.role },
     });
   }
-  return res.status(401).json({ error: "Login yoki parol noto'g\'ri (admin / admin123)" });
+  return res.status(401).json({ error: "Login yoki parol noto’g’ri (admin / admin123)" });
 });
 
 router.get("/dashboard", async (_req, res) => {

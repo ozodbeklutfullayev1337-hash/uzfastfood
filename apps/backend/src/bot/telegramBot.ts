@@ -15,7 +15,7 @@ const STATUS_LABELS: Record<string, string> = {
   CONFIRMED: "✅ Tasdiqlandi",
   PREPARING: "👨‍🍳 Tayyorlanmoqda",
   READY: "📦 Tayyor (kuryer kutilmoqda)",
-  ON_THE_WAY: "🛵 Kuryer yo'lda",
+  ON_THE_WAY: "🛵 Kuryer yo’lda",
   DELIVERED: "🏁 Yetkazib berildi",
   CANCELLED: "❌ Bekor qilindi",
 };
@@ -27,7 +27,7 @@ function buildOrderKeyboard(orderId: string) {
       Markup.button.callback("👨‍🍳 Tayyorlash", `ord_status:${orderId}:PREPARING`),
     ],
     [
-      Markup.button.callback("🛵 Yo'lda", `ord_status:${orderId}:ON_THE_WAY`),
+      Markup.button.callback("🛵 Yo’lda", `ord_status:${orderId}:ON_THE_WAY`),
       Markup.button.callback("🏁 Yetkazildi", `ord_status:${orderId}:DELIVERED`),
     ],
     [Markup.button.callback("❌ Bekor qilish", `ord_status:${orderId}:CANCELLED`)],
@@ -38,7 +38,7 @@ function formatOrderText(order: any) {
   const items = Array.isArray(order.items) ? order.items : [];
   const itemsText = items.length
     ? items
-        .map((it: any, i: number) => `${i + 1}. ${it.name || it.title || "Taom"} × ${it.quantity || it.qty || 1} — ${(Number(it.price || 0) * Number(it.quantity || it.qty || 1)).toLocaleString()} so'm`)
+        .map((it: any, i: number) => `${i + 1}. ${it.name || it.title || "Taom"} × ${it.quantity || it.qty || 1} — ${(Number(it.price || 0) * Number(it.quantity || it.qty || 1)).toLocaleString()} so’m`)
         .join("\n")
     : "—";
 
@@ -50,12 +50,12 @@ function formatOrderText(order: any) {
     `📞 Telefon: <code>${order.phone}</code>`,
     `📍 Manzil: ${order.address}`,
     order.comment ? `💬 Izoh: <i>${order.comment}</i>` : null,
-    `💳 To'lov: ${order.paymentMethod === "CARD_ON_DELIVERY" ? "Karta orqali" : "Naqd pul"}`,
+    `💳 To’lov: ${order.paymentMethod === "CARD_ON_DELIVERY" ? "Karta orqali" : "Naqd pul"}`,
     ``,
     `🍔 <b>Buyurtma tarkibi:</b>`,
     itemsText,
     ``,
-    `💰 <b>Jami summa: ${Number(order.totalAmount).toLocaleString()} so'm</b>`,
+    `💰 <b>Jami summa: ${Number(order.totalAmount).toLocaleString()} so’m</b>`,
   ]
     .filter((line) => line !== null)
     .join("\n");
@@ -125,7 +125,7 @@ export function startTelegramBot() {
       });
       io.emit("order:updated", updated);
       await notifyCustomerStatus(updated);
-      await ctx.answerCbQuery(`Holat o'zgardi: ${STATUS_LABELS[newStatus] || newStatus}`);
+      await ctx.answerCbQuery(`Holat o’zgardi: ${STATUS_LABELS[newStatus] || newStatus}`);
       await ctx.editMessageText(formatOrderText(updated), {
         parse_mode: "HTML",
         ...buildOrderKeyboard(updated.id),

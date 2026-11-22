@@ -72,7 +72,7 @@ export const ProductSheet: React.FC<ProductSheetProps> = ({
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
-        transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+        transition={{ type: 'spring’, damping: 28, stiffness: 300 }}
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-lg max-h-[92vh] bg-[#FAF7F2] rounded-t-[32px] overflow-hidden flex flex-col shadow-2xl"
       >
@@ -204,7 +204,7 @@ export const ProductSheet: React.FC<ProductSheetProps> = ({
             }}
             className="flex-1 py-4 px-5 rounded-2xl bg-[#B91C1C] text-white font-bold text-sm tracking-wide shadow-luxury flex items-center justify-center"
           >
-            SAVATCHAGA QO'SHISH — {formatUZS(totalPrice)}
+            SAVATCHAGA QO’SHISH — {formatUZS(totalPrice)}
           </motion.button>
         </div>
       </motion.div>
