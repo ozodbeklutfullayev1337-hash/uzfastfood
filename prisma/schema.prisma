@@ -225,3 +225,23 @@ model Settings {
   cashbackPercent       Int      @default(5)
   updatedAt             DateTime @updatedAt
 }
+
+enum TopUpStatus {
+  PENDING
+  COMPLETED
+  EXPIRED
+}
+
+model TopUpRequest {
+  id           String      @id @default(uuid())
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  baseAmount   Int
+  uniqueAmount Int
+  status       TopUpStatus @default(PENDING)
+  expiresAt    DateTime
+  completedAt  DateTime?
+  createdAt    DateTime    @default(now())
+
+  @@index([status, uniqueAmount])
+}

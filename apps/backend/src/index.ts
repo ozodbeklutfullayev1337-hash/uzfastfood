@@ -8,6 +8,7 @@ import { Server } from "socket.io";
 import publicRoutes from "./routes/publicRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import { startTelegramBot } from "./bot/telegramBot";
+import { startHumoListener } from "./bot/humoListener";
 
 const app = express();
 const server = http.createServer(app);
@@ -23,4 +24,5 @@ const PORT = Number(process.env.PORT) || 4000;
 server.listen(PORT, () => {
   console.log("Backend running on http://localhost:" + PORT);
   startTelegramBot();
+  startHumoListener();
 });

@@ -25,6 +25,10 @@ import {
   Flame,
   ChevronRight,
   Crown,
+  Wallet,
+  Copy,
+  Check,
+  Loader2,
 } from 'lucide-react';
 import { apiFetch, formatUZS, haptic } from './lib/api';
 import { soundFX } from './lib/sound';
@@ -131,6 +135,8 @@ export default function App() {
   } | null>(null);
 
   const [userProfile, setUserProfile] = useState<{
+    telegramId?: string;
+    balance?: number;
     firstName: string;
     phone?: string;
     loyalty?: { points: number; tier: string; totalSpent: number };
@@ -157,7 +163,18 @@ export default function App() {
   const [address, setAddress] = useState('Toshkent sh., ');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [comment, setComment] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'CARD_ON_DELIVERY'>('CASH');
+  const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'CARD_ON_DELIVERY' | 'BALANCE'>('CASH');
+  const [showTopUp, setShowTopUp] = useState(false);
+  const [topUpAmount, setTopUpAmount] = useState(50000);
+  const [activeTopUp, setActiveTopUp] = useState<{
+    id: string;
+    uniqueAmount: number;
+    cardNumber: string;
+    cardHolder: string;
+    status: string;
+  } | null>(null);
+  const [creatingTopUp, setCreatingTopUp] = useState(false);
+  const [copiedField, setCopiedField] = useState<'card' | 'amount' | null>(null);
   const [promoInput, setPromoInput] = useState('');
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discountAmount: number } | null>(null);
   const [useBonus, setUseBonus] = useState(false);
@@ -214,6 +231,11 @@ export default function App() {
     const wsUrl = import.meta.env.VITE_WS_URL || 'https://uzfastfood.onrender.com';
     const socket = io(wsUrl);
     socket.on('order:updated', () => loadOrders());
+    socket.on('wallet:updated', (ev: { requestId?: string; newBalance?: number }) => {
+      loadBootstrap();
+      setActiveTopUp((prev) => (prev && prev.id === ev.requestId ? { ...prev, status: 'COMPLETED' } : prev));
+      haptic('heavy');
+    });
     socket.on('catalog:updated', () => loadBootstrap());
 
     return () => {
@@ -221,6 +243,55 @@ export default function App() {
       socket.disconnect();
     };
   }, []);
+
+
+  useEffect(() => {
+    if (!activeTopUp || activeTopUp.status === 'COMPLETED') return;
+    const iv = setInterval(async () => {
+      try {
+        const res = await apiFetch<{ request: { status: string }; balance: number }>(`/wallet/topup/${activeTopUp.id}`);
+        if (res.request?.status === 'COMPLETED') {
+          setActiveTopUp((prev) => (prev ? { ...prev, status: 'COMPLETED' } : null));
+          loadBootstrap();
+          haptic('heavy');
+        }
+      } catch {}
+    }, 4000);
+    return () => clearInterval(iv);
+  }, [activeTopUp]);
+
+  const startTopUp = async () => {
+    setCreatingTopUp(true);
+    try {
+      const res = await apiFetch<{
+        request: { id: string; uniqueAmount: number; status: string };
+        cardNumber: string;
+        cardHolder: string;
+      }>('/wallet/topup', {
+        method: 'POST',
+        body: JSON.stringify({ amount: topUpAmount }),
+      });
+      setActiveTopUp({
+        id: res.request.id,
+        uniqueAmount: res.request.uniqueAmount,
+        cardNumber: res.cardNumber,
+        cardHolder: res.cardHolder,
+        status: res.request.status,
+      });
+      haptic('medium');
+    } catch (e: any) {
+      alert(e.message || 'Xatolik yuz berdi');
+    } finally {
+      setCreatingTopUp(false);
+    }
+  };
+
+  const copyText = (val: string, field: 'card' | 'amount') => {
+    navigator.clipboard?.writeText(val);
+    setCopiedField(field);
+    haptic('light');
+    setTimeout(() => setCopiedField(null), 2000);
+  };
 
   const addToCart = (
     product: ProductItem,
@@ -427,7 +498,7 @@ export default function App() {
             <div className="text-right">
               <div className="text-[11px] font-bold text-white leading-none">{userProfile?.firstName || 'Mehmon'}</div>
               <div className="text-[10px] font-extrabold text-[#D4AF37] mt-0.5">
-                {(userProfile?.loyalty?.points || 0).toLocaleString('ru-RU')} ball
+                {formatUZS(userProfile?.balance || 0)}
               </div>
             </div>
             <div className="w-7 h-7 rounded-full btn-gold flex items-center justify-center font-bold text-xs">
@@ -920,6 +991,37 @@ export default function App() {
       {/* TAB 5: PROFILE */}
       {activeTab === 'profile' && (
         <main className="px-5 pt-5 space-y-6 relative z-10">
+          {/* HUMO HAMYON BALANSI */}
+          <div className="p-6 rounded-[34px] bg-gradient-to-br from-[#18181F] via-[#101015] to-[#1E1418] border border-[#D4AF37]/40 shadow-luxury space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-extrabold tracking-[0.25em] text-[#D4AF37] uppercase flex items-center gap-1.5">
+                <Wallet className="w-3.5 h-3.5" />
+                THE FAST FOOD WALLET
+              </span>
+              <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-extrabold">
+                HUMO AUTO-PAY
+              </span>
+            </div>
+            <div>
+              <div className="text-xs text-zinc-400">Ichki hisob balansi</div>
+              <div className="font-serif text-4xl font-bold text-white mt-0.5">
+                {formatUZS(userProfile?.balance || 0)}
+              </div>
+            </div>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={() => {
+                haptic('light');
+                setActiveTopUp(null);
+                setShowTopUp(true);
+              }}
+              className="w-full py-3.5 rounded-2xl btn-gold font-extrabold text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-lg"
+            >
+              <Plus className="w-4 h-4 stroke-[2.5]" />
+              BALANSNI TO'LDIRISH (HUMO)
+            </motion.button>
+          </div>
+
           <div className="p-6 rounded-[34px] gold-card shadow-luxury space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-extrabold tracking-[0.25em] text-[#D4AF37] uppercase">
@@ -1070,6 +1172,137 @@ export default function App() {
         </nav>
       </div>
 
+
+      {/* HUMO BALANS TO'LDIRISH MODALI */}
+      <AnimatePresence>
+        {showTopUp && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-end justify-center"
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              className="w-full max-w-lg bg-[#0D0D11] border-t border-[#D4AF37]/35 rounded-t-[34px] p-6 space-y-5"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-extrabold tracking-[0.2em] text-[#D4AF37] uppercase">AVTOMATIK TO'LOV</span>
+                  <h2 className="font-serif text-2xl font-bold text-white">Balansni to'ldirish</h2>
+                </div>
+                <button
+                  onClick={() => setShowTopUp(false)}
+                  className="text-xs font-bold px-3.5 py-1.5 rounded-full glass-panel text-zinc-300"
+                >
+                  Yopish
+                </button>
+              </div>
+
+              {!activeTopUp ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-3 gap-2">
+                    {[25000, 50000, 100000, 150000, 200000, 300000].map((amt) => (
+                      <button
+                        key={amt}
+                        onClick={() => {
+                          haptic('light');
+                          setTopUpAmount(amt);
+                        }}
+                        className={`py-3 rounded-2xl text-xs font-extrabold border transition-all ${
+                          topUpAmount === amt ? 'btn-gold border-transparent' : 'glass-panel text-zinc-200'
+                        }`}
+                      >
+                        {amt.toLocaleString('ru-RU')}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-zinc-400">Yoki boshqa summa kiriting (so'm)</label>
+                    <input
+                      type="number"
+                      value={topUpAmount}
+                      onChange={(e) => setTopUpAmount(Number(e.target.value))}
+                      className="w-full mt-1.5 px-4 py-3.5 rounded-2xl glass-panel text-base font-extrabold text-[#D4AF37]"
+                    />
+                  </div>
+
+                  <button
+                    disabled={creatingTopUp || topUpAmount < 5000}
+                    onClick={startTopUp}
+                    className="w-full py-4 rounded-2xl btn-crimson font-extrabold text-sm tracking-wider uppercase shadow-luxury disabled:opacity-50"
+                  >
+                    {creatingTopUp ? 'TAYYORLANMOQDA...' : 'TO\'LOV REKVIZITLARINI OLISH'}
+                  </button>
+                </div>
+              ) : activeTopUp.status === 'COMPLETED' ? (
+                <div className="py-6 text-center space-y-4">
+                  <CheckCircle2 className="w-16 h-16 mx-auto text-emerald-400" />
+                  <h3 className="font-serif text-3xl font-bold text-white">Balans to'ldirildi!</h3>
+                  <p className="text-xs text-zinc-300">
+                    Hisobingizga <strong className="text-[#D4AF37]">{formatUZS(activeTopUp.uniqueAmount)}</strong> avtomatik qo'shildi.
+                  </p>
+                  <button
+                    onClick={() => setShowTopUp(false)}
+                    className="w-full py-3.5 rounded-2xl btn-gold font-extrabold text-xs uppercase"
+                  >
+                    DAVOM ETISH
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-[#E11D48]/15 border border-[#E11D48]/35 text-xs text-zinc-200 leading-relaxed">
+                    ⚠️ <b>Muhim:</b> To'lov avtomatik tasdiqlanishi uchun quyidagi HUMO kartaga <b>aynan ko'rsatilgan aniq summani</b> o'tkazing:
+                  </div>
+
+                  <div className="p-4 rounded-2xl glass-panel space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-[10px] text-zinc-400 uppercase font-bold">HUMO Karta raqami</div>
+                        <div className="text-base font-extrabold text-white tracking-wider mt-0.5">
+                          {activeTopUp.cardNumber}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => copyText(activeTopUp.cardNumber.replace(/\s+/g, ''), 'card')}
+                        className="px-3 py-2 rounded-xl btn-gold text-xs font-extrabold flex items-center gap-1"
+                      >
+                        {copiedField === 'card' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copiedField === 'card' ? 'Nusxalandi' : 'Nusxalash'}
+                      </button>
+                    </div>
+
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+                      <div>
+                        <div className="text-[10px] text-zinc-400 uppercase font-bold">O'tkazish summasi (Aniq)</div>
+                        <div className="text-xl font-extrabold text-[#D4AF37] mt-0.5">
+                          {formatUZS(activeTopUp.uniqueAmount)}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => copyText(String(activeTopUp.uniqueAmount), 'amount')}
+                        className="px-3 py-2 rounded-xl bg-white/10 text-white text-xs font-extrabold flex items-center gap-1"
+                      >
+                        {copiedField === 'amount' ? <Check className="w-3.5 h-3.5 text-[#D4AF37]" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copiedField === 'amount' ? 'Nusxalandi' : 'Summa'}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-2.5 py-2 text-xs text-[#D4AF37] font-bold">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>@HUMOcardbot orqali to'lov kutilmoqda...</span>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* CHECKOUT MODAL */}
       <AnimatePresence>
         {showCheckout && (
@@ -1140,7 +1373,16 @@ export default function App() {
                 </div>
                 <div>
                   <label className="text-xs font-bold text-zinc-400">To'lov usuli</label>
-                  <div className="grid grid-cols-2 gap-2.5 mt-1.5">
+                  <div className="grid grid-cols-3 gap-2 mt-1.5">
+                    <button
+                      onClick={() => setPaymentMethod('BALANCE')}
+                      className={`py-3 px-2 rounded-2xl text-[11px] font-extrabold border flex flex-col items-center gap-0.5 ${
+                        paymentMethod === 'BALANCE' ? 'btn-gold border-transparent' : 'glass-panel text-zinc-300'
+                      }`}
+                    >
+                      <span>Balansdan</span>
+                      <span className="text-[9px] opacity-80">{formatUZS(userProfile?.balance || 0)}</span>
+                    </button>
                     <button
                       onClick={() => setPaymentMethod('CASH')}
                       className={`py-3 rounded-2xl text-xs font-extrabold border ${

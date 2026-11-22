@@ -77,29 +77,145 @@ router.post("/promotions/validate", async (req, res) => {
   res.json({ code: p.code, discountAmount: d });
 });
 
-router.post("/orders", async (req, res) => {
+
+// HUMO Avtomatik Balans To'ldirish So'rovi
+router.post("/wallet/topup", async (req, res) => {
+  try {
+    const u = await getOrCreateUser(req);
+    const baseAmount = Math.max(5000, Math.round(Number(req.body.amount || 0)));
+
+    // Muddati o'tgan eski so'rovlarni tozalash
+    await prisma.topUpRequest.updateMany({
+      where: { status: "PENDING", expiresAt: { lt: new Date() } },
+      data: { status: "EXPIRED" },
+    });
+
+    // Hozir band bo'lgan unikal summalarni olish
+    const activeReqs = await prisma.topUpRequest.findMany({
+      where: { status: "PENDING" },
+      select: { uniqueAmount: true },
+    });
+    const taken = new Set(activeReqs.map((r) => r.uniqueAmount));
+
+    // +1 dan +99 gacha bo'sh unikal birlik topish
+    let uniqueAmount = baseAmount + Math.floor(Math.random() * 89) + 11;
+    for (let offset = 1; offset <= 99; offset++) {
+      if (!taken.has(baseAmount + offset)) {
+        uniqueAmount = baseAmount + offset;
+        break;
+      }
+    }
+
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 daqiqa
+    const request = await prisma.topUpRequest.create({
+      data: {
+        userId: u.id,
+        baseAmount,
+        uniqueAmount,
+        expiresAt,
+      },
+    });
+
+    res.json({
+      request,
+      cardNumber: "9860 1701 1062 1555",
+      cardHolder: "HUMO • THE FAST FOOD",
+    });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.get("/wallet/topup/:id", async (req, res) => {
+  const request = await prisma.topUpRequest.findUnique({ where: { id: req.params.id } });
   const u = await getOrCreateUser(req);
-  const b = req.body;
-  const order = await prisma.order.create({
-    data: {
-      userId: u.id,
-      items: b.items || [],
-      subtotal: Number(b.subtotal || 0),
-      discount: Number(b.discount || 0),
-      bonusUsed: Number(b.bonusUsed || 0),
-      deliveryFee: Number(b.deliveryFee || 0),
-      totalAmount: Number(b.totalAmount || 0),
-      promoCode: b.promoCode || null,
-      address: b.address || "Toshkent",
-      phone: b.phone || "",
-      customerName: b.customerName || u.firstName,
-      comment: b.comment || null,
-      paymentMethod: b.paymentMethod === "CARD_ON_DELIVERY" ? "CARD_ON_DELIVERY" : "CASH",
-    },
-  });
-  io.emit("order:created", order);
-  notifyNewOrder(order);
-  res.json({ order });
+  res.json({ request, balance: u.balance });
+});
+
+router.post("/orders", async (req, res) => {
+  try {
+    const u = await getOrCreateUser(req);
+    const b = req.body;
+    const method = ["CASH", "CARD_ON_DELIVERY", "BALANCE"].includes(b.paymentMethod) ? b.paymentMethod : "CASH";
+
+    const items = Array.isArray(b.items) ? b.items : [];
+    const productIds = items.map((i: any) => i.productId);
+    const dbProducts = await prisma.product.findMany({ where: { id: { in: productIds } } });
+
+    let calcSubtotal = 0;
+    const enrichedItems = items.map((i: any) => {
+      const p = dbProducts.find((dp) => dp.id === i.productId);
+      const extras = Array.isArray(i.customizations) ? i.customizations.reduce((s: number, c: any) => s + Number(c.price || 0), 0) : 0;
+      const unitPrice = (p?.price || 0) + extras;
+      const qty = Math.max(1, Number(i.quantity || 1));
+      calcSubtotal += unitPrice * qty;
+      return {
+        productId: i.productId,
+        name: p?.name || "Taom",
+        imageUrl: p?.imageUrl || "",
+        unitPrice,
+        quantity: qty,
+      };
+    });
+
+    const subtotal = Number(b.subtotal || calcSubtotal);
+    const bonusUsed = Math.min(u.loyalty?.points || 0, Math.max(0, Number(b.useBonusPoints || b.bonusUsed || 0)));
+    let discount = Number(b.discount || 0);
+    if (b.promoCode && !discount) {
+      const promo = await prisma.promotion.findUnique({ where: { code: String(b.promoCode).toUpperCase() } });
+      if (promo && promo.isActive) {
+        discount = promo.discountType === "PERCENTAGE" ? Math.round((subtotal * promo.discountValue) / 100) : promo.discountValue;
+      }
+    }
+    const deliveryFee = subtotal - discount >= 100000 ? 0 : 15000;
+    const totalAmount = Math.max(0, subtotal - discount - bonusUsed + deliveryFee);
+
+    if (method === "BALANCE" && u.balance < totalAmount) {
+      return res.status(400).json({ error: "Balansingizda mablag' yetarli emas. Avval balansni to'ldiring." });
+    }
+
+    const order = await prisma.$transaction(async (tx) => {
+      if (method === "BALANCE") {
+        await tx.user.update({
+          where: { id: u.id },
+          data: { balance: { decrement: totalAmount } },
+        });
+      }
+      if (bonusUsed > 0 && u.loyalty) {
+        await tx.loyalty.update({
+          where: { userId: u.id },
+          data: { points: { decrement: bonusUsed } },
+        });
+      }
+      return tx.order.create({
+        data: {
+          userId: u.id,
+          items: enrichedItems,
+          subtotal,
+          discount,
+          bonusUsed,
+          deliveryFee,
+          totalAmount,
+          promoCode: b.promoCode || null,
+          address: b.address || "Toshkent",
+          latitude: b.latitude ?? null,
+          longitude: b.longitude ?? null,
+          phone: b.phone || "",
+          customerName: b.customerName || u.firstName,
+          comment: b.comment || null,
+          paymentMethod: method,
+          paymentStatus: method === "BALANCE" ? "PAID" : "UNPAID",
+          orderStatus: method === "BALANCE" ? "CONFIRMED" : "PENDING",
+        },
+      });
+    });
+
+    io.emit("order:created", order);
+    notifyNewOrder(order);
+    res.json({ order });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 export default router;
