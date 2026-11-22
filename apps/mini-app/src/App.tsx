@@ -674,7 +674,7 @@ export default function App() {
                           </p>
                         )}
                         {item.comboDetails && (
-                          <p className="text-[11px] text-[#C59B27] font-medium truncate">{item.comboDetails.join(' ' ')}</p>
+                          <p className="text-[11px] text-[#C59B27] font-medium truncate">{item.comboDetails.join(' • ')}</p>
                         )}
                         <div className="font-extrabold text-sm text-[#B91C1C] mt-1">{formatUZS(unit * item.quantity)}</div>
                       </div>
