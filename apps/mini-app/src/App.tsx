@@ -165,7 +165,7 @@ export default function App() {
   const [comment, setComment] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'CARD_ON_DELIVERY' | 'BALANCE'>('CASH');
   const [showTopUp, setShowTopUp] = useState(false);
-  const [topUpAmount, setTopUpAmount] = useState(50000);
+  const [topUpAmount, setTopUpAmount] = useState(1000);
   const [activeTopUp, setActiveTopUp] = useState<{
     id: string;
     uniqueAmount: number;
@@ -1231,7 +1231,7 @@ export default function App() {
                   </div>
 
                   <button
-                    disabled={creatingTopUp || topUpAmount < 5000}
+                    disabled={creatingTopUp || topUpAmount < 1000}
                     onClick={startTopUp}
                     className="w-full py-4 rounded-2xl btn-crimson font-extrabold text-sm tracking-wider uppercase shadow-luxury disabled:opacity-50"
                   >

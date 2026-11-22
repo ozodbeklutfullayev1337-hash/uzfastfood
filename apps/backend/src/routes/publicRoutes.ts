@@ -82,7 +82,7 @@ router.post("/promotions/validate", async (req, res) => {
 router.post("/wallet/topup", async (req, res) => {
   try {
     const u = await getOrCreateUser(req);
-    const baseAmount = Math.max(5000, Math.round(Number(req.body.amount || 0)));
+    const baseAmount = Math.max(1000, Math.round(Number(req.body.amount || 0)));
 
     // Muddati o'tgan eski so'rovlarni tozalash
     await prisma.topUpRequest.updateMany({
