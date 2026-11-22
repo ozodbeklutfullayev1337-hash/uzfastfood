@@ -1,0 +1,227 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  COURIER_ASSIGNED
+  ON_THE_WAY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD_ON_DELIVERY
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+}
+
+enum LoyaltyTier {
+  BRONZE
+  SILVER
+  GOLD
+  VIP
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  MANAGER
+  KITCHEN_STAFF
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+model User {
+  id         String     @id @default(uuid())
+  telegramId String     @unique
+  username   String?
+  firstName  String
+  lastName   String?
+  phone      String?
+  birthDate  DateTime?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  orders     Order[]
+  favorites  Favorite[]
+  addresses  Address[]
+  loyalty    Loyalty?
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  slug        String    @unique
+  name        String
+  description String?
+  imageUrl    String
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+}
+
+model Product {
+  id              String     @id @default(uuid())
+  slug            String     @unique
+  name            String
+  description     String
+  ingredients     String[]   @default([])
+  calories        Int?
+  imageUrl        String
+  categoryId      String
+  category        Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  price           Int
+  oldPrice        Int?
+  isAvailable     Boolean    @default(true)
+  isPopular       Boolean    @default(false)
+  isNew           Boolean    @default(false)
+  preparationTime Int        @default(15)
+  customizations  Json?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  favorites       Favorite[]
+}
+
+model Order {
+  id             String               @id @default(uuid())
+  orderNumber    Int                  @unique @default(autoincrement())
+  idempotencyKey String?              @unique
+  userId         String
+  user           User                 @relation(fields: [userId], references: [id])
+  branchId       String?
+  branch         Branch?              @relation(fields: [branchId], references: [id])
+  items          Json
+  subtotal       Int
+  discount       Int                  @default(0)
+  bonusUsed      Int                  @default(0)
+  deliveryFee    Int                  @default(0)
+  totalAmount    Int
+  promoCode      String?
+  address        String
+  latitude       Float?
+  longitude      Float?
+  phone          String
+  customerName   String
+  comment        String?
+  paymentMethod  PaymentMethod        @default(CASH)
+  paymentStatus  PaymentStatus        @default(UNPAID)
+  orderStatus    OrderStatus          @default(PENDING)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  statusHistory  OrderStatusHistory[]
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(uuid())
+  orderId   String
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    OrderStatus
+  note      String?
+  changedBy String?
+  createdAt DateTime    @default(now())
+}
+
+model Promotion {
+  id             String       @id @default(uuid())
+  code           String       @unique
+  title          String
+  description    String?
+  discountType   DiscountType @default(PERCENTAGE)
+  discountValue  Int
+  minOrderAmount Int          @default(0)
+  maxDiscount    Int?
+  usageLimit     Int?
+  usedCount      Int          @default(0)
+  expiresAt      DateTime?
+  isActive       Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model Address {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  address   String
+  latitude  Float?
+  longitude Float?
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Loyalty {
+  id          String      @id @default(uuid())
+  userId      String      @unique
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  points      Int         @default(0)
+  totalSpent  Int         @default(0)
+  tier        LoyaltyTier @default(BRONZE)
+  updatedAt   DateTime    @updatedAt
+}
+
+model Admin {
+  id           String    @id @default(uuid())
+  login        String    @unique
+  passwordHash String
+  fullName     String
+  role         AdminRole @default(SUPER_ADMIN)
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+}
+
+model Branch {
+  id           String   @id @default(uuid())
+  name         String
+  address      String
+  phone        String
+  workingHours String   @default("09:00 - 03:00")
+  latitude     Float?
+  longitude    Float?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  orders       Order[]
+}
+
+model Settings {
+  id                    String   @id @default("default")
+  companyName           String   @default("THE FAST FOOD")
+  companyPhone          String   @default("+998 90 755 31 23")
+  deliveryZone          String   @default("Toshkent shahri bo'ylab")
+  deliveryFee           Int      @default(15000)
+  minOrderAmount        Int      @default(30000)
+  freeDeliveryThreshold Int      @default(100000)
+  estimatedDeliveryTime String   @default("30-45 daqiqa")
+  cashbackPercent       Int      @default(5)
+  updatedAt             DateTime @updatedAt
+}
