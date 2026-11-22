@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,10 +7,13 @@
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #09090B;
-    color: #F4F4F5;
+    background-color: #070709;
+    color: #FAFAFA;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
+  }
+  .font-serif {
+    font-family: 'Cormorant Garamond', Georgia, serif;
   }
 }
 
@@ -20,6 +25,28 @@
   scrollbar-width: none;
 }
 
+.glass-panel {
+  background: linear-gradient(145deg, rgba(24, 24, 30, 0.82) 0%, rgba(13, 13, 17, 0.92) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gold-card {
+  background: linear-gradient(145deg, rgba(212, 175, 55, 0.14) 0%, rgba(18, 18, 22, 0.95) 60%, rgba(225, 29, 72, 0.1) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.28);
+}
+
 .shadow-luxury {
-  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.85), 0 0 24px -4px rgba(212, 175, 55, 0.18);
+  box-shadow: 0 24px 60px -15px rgba(0, 0, 0, 0.9), 0 0 30px -8px rgba(212, 175, 55, 0.2);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, #F5E6B3 0%, #D4AF37 50%, #B48A28 100%);
+  color: #09090B;
+}
+
+.btn-crimson {
+  background: linear-gradient(135deg, #F43F5E 0%, #E11D48 50%, #9F1239 100%);
+  color: #FFFFFF;
 }

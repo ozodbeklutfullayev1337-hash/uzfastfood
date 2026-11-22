@@ -19,7 +19,12 @@ import {
   Phone,
   Navigation,
   Tag,
-  RotateCcw, Volume2, VolumeX,
+  RotateCcw,
+  Volume2,
+  VolumeX,
+  Flame,
+  ChevronRight,
+  Crown,
 } from 'lucide-react';
 import { apiFetch, formatUZS, haptic } from './lib/api';
 import { soundFX } from './lib/sound';
@@ -64,12 +69,12 @@ interface OrderRecord {
 const STORIES: StoryItem[] = [
   {
     id: 's1',
-    title: 'YANGI TA’M',
+    title: 'YANGI TA\'M',
     badge: 'NEW DROP',
     image: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=1000&q=85',
     headline: 'Double Truffle Cheeseburger',
-    description: 'Ikki hissa marmar mol go’shti va maxsus trufel sousi uyg’unligi.',
-    ctaText: 'HOZIROQ SINAB KO’RISH',
+    description: 'Ikki hissa marmar mol go\'shti va maxsus trufel sousi uyg\'unligi.',
+    ctaText: 'HOZIROQ SINAB KO\'RISH',
   },
   {
     id: 's2',
@@ -78,15 +83,15 @@ const STORIES: StoryItem[] = [
     image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=1000&q=85',
     headline: 'WELCOME15 promo-kodi faol!',
     description: 'Ilova orqali ilk buyurtmangizga 15% chegirma oling.',
-    ctaText: 'KATALOGGA O’TISH',
+    ctaText: 'KATALOGGA O\'TISH',
   },
   {
     id: 's3',
     title: 'SMART COMBO',
     badge: '10% TEJANG',
     image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=1000&q=85',
-    headline: 'O’z Combo menyuingizni yarating',
-    description: 'Burger + Fri + Ichimlik tanlang va avtomatik 10% chegirmaga ega bo’ling.',
+    headline: 'O\'z Combo menyuingizni yarating',
+    description: 'Burger + Fri + Ichimlik tanlang va avtomatik 10% chegirmaga ega bo\'ling.',
     ctaText: 'COMBO TUZISH',
   },
   {
@@ -95,17 +100,17 @@ const STORIES: StoryItem[] = [
     badge: '5% CASHBACK',
     image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=85',
     headline: 'Har bir xariddan 5% keshbek',
-    description: 'Yig’ilgan ballarni keyingi buyurtmalarda naqd puldek ishlating.',
-    ctaText: 'PROFILNI KO’RISH',
+    description: 'Yig\'ilgan ballarni keyingi buyurtmalarda naqd puldek ishlating.',
+    ctaText: 'PROFILNI KO\'RISH',
   },
 ];
 
 const TRACKING_STEPS = [
-  { key: 'PENDING', label: 'Buyurtma qabul qilindi' },
+  { key: 'PENDING', label: 'Qabul qilindi' },
   { key: 'CONFIRMED', label: 'Tasdiqlandi' },
   { key: 'PREPARING', label: 'Tayyorlanmoqda' },
   { key: 'READY', label: 'Tayyor' },
-  { key: 'ON_THE_WAY', label: 'Yo’lda' },
+  { key: 'ON_THE_WAY', label: 'Yo\'lda' },
   { key: 'DELIVERED', label: 'Yetkazildi' },
 ];
 
@@ -136,20 +141,17 @@ export default function App() {
   const [orders, setOrders] = useState<OrderRecord[]>([]);
   const [cart, setCart] = useState<CartEntry[]>([]);
 
-  // Modals
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [showComboBuilder, setShowComboBuilder] = useState(false);
   const [activeStory, setActiveStory] = useState<StoryItem | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
   const [orderSuccessModal, setOrderSuccessModal] = useState<OrderRecord | null>(null);
 
-  // Catalog filters
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'popular' | 'price_asc' | 'price_desc'>('popular');
   const [onlyDiscounts, setOnlyDiscounts] = useState(false);
 
-  // Checkout state
   const [customerName, setCustomerName] = useState('');
   const [phone, setPhone] = useState('+998 ');
   const [address, setAddress] = useState('Toshkent sh., ');
@@ -202,8 +204,10 @@ export default function App() {
   useEffect(() => {
     window.Telegram?.WebApp?.ready();
     window.Telegram?.WebApp?.expand();
+    window.Telegram?.WebApp?.setHeaderColor?.('#070709');
+    window.Telegram?.WebApp?.setBackgroundColor?.('#070709');
 
-    const timer = setTimeout(() => setShowSplash(false), 1400);
+    const timer = setTimeout(() => setShowSplash(false), 1300);
     loadBootstrap();
     loadOrders();
 
@@ -243,7 +247,7 @@ export default function App() {
     try {
       await apiFetch(`/my/favorites/${productId}`, { method: 'POST' });
     } catch {
-      // revert if needed
+      // ignore
     }
   };
 
@@ -258,6 +262,8 @@ export default function App() {
         return Number(b.isPopular) - Number(a.isPopular);
       });
   }, [products, selectedCategory, onlyDiscounts, searchQuery, sortBy]);
+
+  const cartCount = useMemo(() => cart.reduce((s, i) => s + i.quantity, 0), [cart]);
 
   const cartSubtotal = useMemo(() => {
     return cart.reduce((sum, item) => {
@@ -292,7 +298,7 @@ export default function App() {
 
   const detectLocation = () => {
     if (!navigator.geolocation) {
-      alert('Qurilmangiz geolokatsiyani qo’llab-quvvatlamaydi');
+      alert('Qurilmangiz geolokatsiyani qo\'llab-quvvatlamaydi');
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -307,7 +313,7 @@ export default function App() {
 
   const submitOrder = async () => {
     if (!customerName.trim() || phone.trim().length < 9 || address.trim().length < 5) {
-      alert('Iltimos, ism, telefon raqam va manzilni to’liq kiriting');
+      alert('Iltimos, ism, telefon raqam va manzilni to\'liq kiriting');
       return;
     }
     setSubmittingOrder(true);
@@ -353,21 +359,23 @@ export default function App() {
     }
   };
 
-  // Luxury Splash Screen
   if (showSplash) {
     return (
-      <div className="fixed inset-0 z-50 bg-[#18181D] flex flex-col items-center justify-center text-[#FAF7F2]">
+      <div className="fixed inset-0 z-50 bg-[#070709] flex flex-col items-center justify-center text-white overflow-hidden">
+        <div className="absolute w-72 h-72 rounded-full bg-[#D4AF37]/15 blur-[100px]" />
         <motion.div
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center space-y-4"
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="relative z-10 text-center space-y-4"
         >
-          <div className="w-16 h-16 mx-auto rounded-2xl border border-[#D4AF37]/50 flex items-center justify-center bg-[#D4AF37]/10">
-            <Sparkles className="w-8 h-8 text-[#D4AF37]" />
+          <div className="w-20 h-20 mx-auto rounded-[28px] gold-card flex items-center justify-center shadow-luxury">
+            <Crown className="w-9 h-9 text-[#D4AF37]" />
           </div>
-          <h1 className="font-serif text-3xl tracking-[0.25em] font-bold">THE FAST FOOD</h1>
-          <p className="text-xs tracking-[0.35em] text-[#D4AF37] uppercase">Premium Food Experience</p>
+          <h1 className="font-serif text-4xl tracking-[0.22em] font-bold bg-gradient-to-r from-[#F5E6B3] via-[#D4AF37] to-[#F5E6B3] bg-clip-text text-transparent">
+            THE FAST FOOD
+          </h1>
+          <p className="text-[11px] tracking-[0.38em] text-zinc-400 uppercase">Haute Fast Cuisine</p>
         </motion.div>
       </div>
     );
@@ -378,47 +386,72 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#09090B] text-[#F4F4F5] pb-28 max-w-lg mx-auto relative shadow-2xl">
-      {/* HEADER */}
-      <header className="sticky top-0 z-30 bg-[#09090B]/90 backdrop-blur-xl px-5 py-4 border-b border-white/10/5 flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#E11D48]" />
-            <span className="font-serif font-extrabold tracking-[0.16em] text-sm">THE FAST FOOD</span>
+    <div className="min-h-screen bg-[#070709] text-[#FAFAFA] pb-32 max-w-lg mx-auto relative overflow-x-hidden">
+      {/* Ambient Luxury Lighting */}
+      <div className="pointer-events-none fixed top-[-120px] left-1/2 -translate-x-1/2 w-[420px] h-[280px] rounded-full bg-[#D4AF37]/10 blur-[120px] z-0" />
+      <div className="pointer-events-none fixed bottom-20 right-[-80px] w-[260px] h-[260px] rounded-full bg-[#E11D48]/10 blur-[110px] z-0" />
+
+      {/* FLOATING GLASS HEADER */}
+      <header className="sticky top-0 z-30 bg-[#070709]/80 backdrop-blur-2xl px-5 py-3.5 border-b border-white/[0.06] flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl gold-card flex items-center justify-center shrink-0">
+            <Crown className="w-5 h-5 text-[#D4AF37]" />
           </div>
-          <div className="flex items-center gap-1 text-xs text-[#F4F4F5]/65 mt-0.5">
-            <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
-            <span className="truncate max-w-[200px]">{settings?.deliveryZone || 'Toshkent shahri'}</span>
+          <div>
+            <div className="font-serif font-bold tracking-[0.14em] text-base leading-none text-white">
+              THE FAST FOOD
+            </div>
+            <div className="flex items-center gap-1 text-[11px] text-zinc-400 mt-1">
+              <MapPin className="w-3 h-3 text-[#D4AF37]" />
+              <span className="truncate max-w-[155px]">{settings?.deliveryZone || 'Toshkent shahri'}</span>
+            </div>
           </div>
         </div>
 
-        <button
-          onClick={() => setActiveTab('profile')}
-          className="flex items-center gap-2.5 bg-[#141418] pl-3 pr-2 py-1.5 rounded-full border border-white/10/5"
-        >
-          <div className="text-right">
-            <div className="text-xs font-bold leading-none">{userProfile?.firstName || 'Mehmon'}</div>
-            <div className="text-[10px] font-bold text-[#D4AF37] mt-0.5">
-              {(userProfile?.loyalty?.points || 0).toLocaleString('ru-RU')} ball
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSoundOn(soundFX.toggle())}
+            aria-label="Ovoz"
+            className="w-9 h-9 rounded-full glass-panel flex items-center justify-center text-[#D4AF37] active:scale-90 transition-transform"
+          >
+            {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 text-zinc-500" />}
+          </button>
+
+          <button
+            onClick={() => {
+              haptic('light');
+              setActiveTab('profile');
+            }}
+            className="flex items-center gap-2 glass-panel pl-3 pr-1.5 py-1 rounded-full active:scale-95 transition-transform"
+          >
+            <div className="text-right">
+              <div className="text-[11px] font-bold text-white leading-none">{userProfile?.firstName || 'Mehmon'}</div>
+              <div className="text-[10px] font-extrabold text-[#D4AF37] mt-0.5">
+                {(userProfile?.loyalty?.points || 0).toLocaleString('ru-RU')} ball
+              </div>
             </div>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-[#18181D] text-[#FAF7F2] flex items-center justify-center font-serif font-bold text-xs">
-            {(userProfile?.firstName || 'M')[0]}
-          </div>
-        </button>
+            <div className="w-7 h-7 rounded-full btn-gold flex items-center justify-center font-bold text-xs">
+              {(userProfile?.firstName || 'M')[0]}
+            </div>
+          </button>
+        </div>
       </header>
 
       {/* LIVE ORDER TRACKING BANNER */}
       {activeOrder && (
-        <div className="mx-5 mt-4 p-4 rounded-3xl bg-[#18181D] text-[#FAF7F2] shadow-luxury space-y-3">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mx-5 mt-4 p-4 rounded-[26px] gold-card shadow-luxury space-y-2.5 relative z-10"
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#D4AF37] animate-ping" />
-              <span className="text-xs font-bold tracking-wider uppercase text-[#D4AF37]">
-                JONLI KUZATUV ' BUYURTMA #{activeOrder.orderNumber}
+              <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-ping" />
+              <span className="text-[11px] font-extrabold tracking-widest uppercase text-[#D4AF37]">
+                JONLI KUZATUV • #{activeOrder.orderNumber}
               </span>
             </div>
-            <span className="text-xs font-bold">{formatUZS(activeOrder.totalAmount)}</span>
+            <span className="text-xs font-extrabold text-white">{formatUZS(activeOrder.totalAmount)}</span>
           </div>
 
           <div className="grid grid-cols-6 gap-1.5">
@@ -426,101 +459,169 @@ export default function App() {
               const currentIdx = TRACKING_STEPS.findIndex((s) => s.key === activeOrder.orderStatus);
               const done = idx <= currentIdx;
               return (
-                <div key={st.key} className="space-y-1">
-                  <div className={`h-1.5 rounded-full ${done ? 'bg-[#D4AF37]' : 'bg-[#121216]/20'}`} />
-                </div>
+                <div
+                  key={st.key}
+                  className={`h-1.5 rounded-full transition-all ${done ? 'bg-gradient-to-r from-[#D4AF37] to-[#F5E6B3]' : 'bg-white/10'}`}
+                />
               );
             })}
           </div>
-          <div className="text-xs text-white/80 font-medium">
-            Holat:{' '}
-            <strong className="text-white">
-              {TRACKING_STEPS.find((s) => s.key === activeOrder.orderStatus)?.label || activeOrder.orderStatus}
-            </strong>
+          <div className="text-xs text-zinc-300 flex items-center justify-between">
+            <span>
+              Holat:{' '}
+              <strong className="text-white">
+                {TRACKING_STEPS.find((s) => s.key === activeOrder.orderStatus)?.label || activeOrder.orderStatus}
+              </strong>
+            </span>
+            <span className="text-[11px] text-[#D4AF37] font-semibold">~25 daq</span>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* TAB 1: HOME */}
       {activeTab === 'home' && (
-        <main className="px-5 pt-4 space-y-7">
-          {/* Stories */}
+        <main className="px-5 pt-4 space-y-7 relative z-10">
+          {/* Luxury Stories */}
           <div className="flex gap-3.5 overflow-x-auto no-scrollbar py-1">
             {STORIES.map((story) => (
               <button
                 key={story.id}
-                onClick={() => setActiveStory(story)}
-                className="flex flex-col items-center gap-1.5 shrink-0"
+                onClick={() => {
+                  haptic('light');
+                  setActiveStory(story);
+                }}
+                className="flex flex-col items-center gap-1.5 shrink-0 group"
               >
-                <div className="w-[72px] h-[72px] rounded-full p-[2.5px] bg-gradient-to-tr from-[#E11D48] via-[#D4AF37] to-[#0F0F0F]">
+                <div className="w-[70px] h-[70px] rounded-[24px] p-[2px] bg-gradient-to-tr from-[#E11D48] via-[#D4AF37] to-[#F5E6B3] group-active:scale-95 transition-transform">
                   <img
                     src={story.image}
                     alt={story.title}
-                    className="w-full h-full object-cover rounded-full border-2 border-[#FAF7F2]"
+                    className="w-full h-full object-cover rounded-[22px] border-2 border-[#070709]"
                   />
                 </div>
-                <span className="text-[11px] font-bold tracking-tight text-[#F4F4F5]/85">{story.title}</span>
+                <span className="text-[10px] font-bold tracking-wider text-zinc-300">{story.title}</span>
               </button>
             ))}
           </div>
 
-          {/* Cinematic Hero Banner */}
+          {/* Cinematic 3D Hero Card */}
           <motion.section
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative h-72 rounded-[32px] overflow-hidden bg-[#18181D] shadow-luxury flex flex-col justify-end p-6 text-white"
+            className="relative h-72 rounded-[34px] overflow-hidden border border-[#D4AF37]/25 shadow-luxury flex flex-col justify-end p-6"
           >
             <img
               src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=90"
               alt="Signature Burger"
-              className="absolute inset-0 w-full h-full object-cover opacity-75"
+              className="absolute inset-0 w-full h-full object-cover scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0F] via-[#0F0F0F]/45 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#070709] via-[#070709]/55 to-transparent" />
             <div className="relative z-10 space-y-2.5">
-              <span className="inline-block px-3 py-1 rounded-full bg-[#D4AF37] text-[#F4F4F5] text-[10px] font-extrabold tracking-widest uppercase">
-                CHEF SIGNATURE
-              </span>
-              <h2 className="font-serif text-3xl font-bold leading-tight">BUGUN O’ZINGIZNI SIYLANG!</h2>
-              <p className="text-xs text-white/80">Sevimli ta’mingizni bir bosishda issiqqina buyurtma qiling.</p>
-              <button
-                onClick={() => setActiveTab('catalog')}
-                className="mt-2 px-6 py-3 rounded-2xl bg-[#E11D48] text-white font-bold text-xs tracking-wider uppercase shadow-lg"
-              >
-                BUYURTMA BERISH
-              </button>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 text-[#D4AF37] text-[10px] font-extrabold tracking-[0.2em] uppercase">
+                <Sparkles className="w-3 h-3" />
+                CHEF'S PRIVATE COLLECTION
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold leading-none text-white">
+                Haqiqiy Ta'm San'ati
+              </h2>
+              <p className="text-xs text-zinc-300 max-w-[270px]">
+                Marmar mol go'shti, trufel souslari va 25 daqiqada issiq yetkazib berish.
+              </p>
+              <div className="pt-1 flex items-center gap-2.5">
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    haptic('light');
+                    setActiveTab('catalog');
+                  }}
+                  className="px-6 py-3 rounded-2xl btn-gold font-extrabold text-xs tracking-wider uppercase shadow-lg"
+                >
+                  MENYUNI OCHISH
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    haptic('light');
+                    setShowComboBuilder(true);
+                  }}
+                  className="px-4 py-3 rounded-2xl glass-panel text-white font-bold text-xs"
+                >
+                  Combo -10%
+                </motion.button>
+              </div>
             </div>
           </motion.section>
 
-          {/* Smart Combo Builder Banner */}
-          <section
-            onClick={() => setShowComboBuilder(true)}
-            className="p-5 rounded-[28px] bg-gradient-to-r from-[#F2ECE1] to-[#E8DEC8] border border-[#D4AF37]/30 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-transform"
+          {/* Horizontal Category Quick Pills */}
+          <div className="flex gap-2 overflow-x-auto no-scrollbar">
+            <button
+              onClick={() => {
+                haptic('light');
+                setSelectedCategory('all');
+                setActiveTab('catalog');
+              }}
+              className="px-4 py-2.5 rounded-2xl btn-gold text-xs font-extrabold shrink-0"
+            >
+              Barchasi
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  haptic('light');
+                  setSelectedCategory(cat.id);
+                  setActiveTab('catalog');
+                }}
+                className="px-4 py-2.5 rounded-2xl glass-panel text-xs font-bold text-zinc-200 shrink-0 hover:border-[#D4AF37]/40 transition-colors"
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Smart Combo VIP Card */}
+          <motion.section
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              haptic('light');
+              setShowComboBuilder(true);
+            }}
+            className="p-5 rounded-[30px] gold-card flex items-center justify-between cursor-pointer shadow-luxury"
           >
             <div className="space-y-1">
-              <div className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#E11D48] uppercase tracking-wider">
-                <Sparkles className="w-3.5 h-3.5" />
-                SMART COMBO BUILDER
+              <div className="inline-flex items-center gap-1.5 text-[10px] font-extrabold text-[#D4AF37] uppercase tracking-[0.2em]">
+                <Flame className="w-3.5 h-3.5 text-[#E11D48]" />
+                SMART COMBO • -10% CHEGIRMA
               </div>
-              <h3 className="font-serif text-xl font-bold text-[#F4F4F5]">O’z Combo menyuingizni tuzing</h3>
-              <p className="text-xs text-[#F4F4F5]/70">Taom + Fri + Ichimlik tanlang va 10% tejang!</p>
+              <h3 className="font-serif text-2xl font-bold text-white">O'z Combo setingizni tuzing</h3>
+              <p className="text-xs text-zinc-400">Burger + Fri + Ichimlik tanlang va avtomatik 10% tejang</p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-[#18181D] text-[#D4AF37] flex items-center justify-center shrink-0">
-              <Plus className="w-6 h-6" />
+            <div className="w-12 h-12 rounded-2xl btn-gold flex items-center justify-center shrink-0 shadow-lg">
+              <ChevronRight className="w-6 h-6" />
             </div>
-          </section>
+          </motion.section>
 
-          {/* Popular Products */}
+          {/* Popular Bento Grid (2 Columns) */}
           <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-serif text-2xl font-bold">Eng mashhur taomlar</h3>
-              <button onClick={() => setActiveTab('catalog')} className="text-xs font-bold text-[#E11D48]">
-                Barchasi ’'
+              <div>
+                <span className="text-[10px] font-extrabold tracking-[0.25em] text-[#D4AF37] uppercase">BESTSELLERS</span>
+                <h3 className="font-serif text-2xl font-bold text-white">Eng mashhur taomlar</h3>
+              </div>
+              <button
+                onClick={() => {
+                  haptic('light');
+                  setActiveTab('catalog');
+                }}
+                className="text-xs font-bold text-[#D4AF37] flex items-center gap-1"
+              >
+                Barchasi <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="grid grid-cols-1 gap-5">
+            <div className="grid grid-cols-2 gap-3.5">
               {products.filter((p) => p.isPopular).map((product) => (
-                <ProductCard
+                <BentoProductCard
                   key={product.id}
                   product={product}
                   isFavorite={favoriteIds.includes(product.id)}
@@ -536,24 +637,25 @@ export default function App() {
 
       {/* TAB 2: CATALOG */}
       {activeTab === 'catalog' && (
-        <main className="px-5 pt-4 space-y-5">
-          {/* Search */}
+        <main className="px-5 pt-4 space-y-5 relative z-10">
           <div className="relative">
-            <Search className="w-4 h-4 text-[#F4F4F5]/45 absolute left-4 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-zinc-400 absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Burger, pizza, fri yoki ichimlik izlash..."
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-[#121216] border border-white/10/10 text-sm focus:outline-none focus:border-white/10"
+              placeholder="Taom nomini izlang..."
+              className="w-full pl-11 pr-4 py-3.5 rounded-2xl glass-panel text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#D4AF37]/50"
             />
           </div>
 
-          {/* Horizontal Category Pills */}
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
             <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-4 py-2.5 rounded-2xl text-xs font-bold shrink-0 transition-all ${
-                selectedCategory === 'all' ? 'bg-[#18181D] text-[#FAF7F2]' : 'bg-[#141418] text-[#F4F4F5]'
+              onClick={() => {
+                haptic('light');
+                setSelectedCategory('all');
+              }}
+              className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold shrink-0 transition-all ${
+                selectedCategory === 'all' ? 'btn-gold shadow-md' : 'glass-panel text-zinc-300'
               }`}
             >
               Barchasi
@@ -561,9 +663,12 @@ export default function App() {
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 py-2.5 rounded-2xl text-xs font-bold shrink-0 transition-all ${
-                  selectedCategory === cat.id ? 'bg-[#18181D] text-[#FAF7F2]' : 'bg-[#141418] text-[#F4F4F5]'
+                onClick={() => {
+                  haptic('light');
+                  setSelectedCategory(cat.id);
+                }}
+                className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold shrink-0 transition-all ${
+                  selectedCategory === cat.id ? 'btn-gold shadow-md' : 'glass-panel text-zinc-300'
                 }`}
               >
                 {cat.name}
@@ -571,12 +676,14 @@ export default function App() {
             ))}
           </div>
 
-          {/* Sort & Discount Filters */}
           <div className="flex items-center justify-between gap-2">
             <button
-              onClick={() => setOnlyDiscounts(!onlyDiscounts)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold border ${
-                onlyDiscounts ? 'bg-[#E11D48] text-white border-[#E11D48]' : 'bg-[#121216] border-white/10/10'
+              onClick={() => {
+                haptic('light');
+                setOnlyDiscounts(!onlyDiscounts);
+              }}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-all ${
+                onlyDiscounts ? 'btn-crimson border-transparent' : 'glass-panel text-zinc-300'
               }`}
             >
               % Chegirmalar
@@ -584,17 +691,17 @@ export default function App() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'popular' | 'price_asc' | 'price_desc')}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#121216] border border-white/10/10"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold glass-panel text-zinc-200 focus:outline-none"
             >
-              <option value="popular">Mashhurlik bo’yicha</option>
-              <option value="price_asc">Arzonroq avval</option>
-              <option value="price_desc">Qimmatroq avval</option>
+              <option value="popular" className="bg-[#121216]">Mashhurlik bo'yicha</option>
+              <option value="price_asc" className="bg-[#121216]">Arzonroq avval</option>
+              <option value="price_desc" className="bg-[#121216]">Qimmatroq avval</option>
             </select>
           </div>
 
-          <div className="grid grid-cols-1 gap-5">
+          <div className="grid grid-cols-2 gap-3.5">
             {filteredProducts.map((product) => (
-              <ProductCard
+              <BentoProductCard
                 key={product.id}
                 product={product}
                 isFavorite={favoriteIds.includes(product.id)}
@@ -609,25 +716,25 @@ export default function App() {
 
       {/* TAB 3: FAVORITES */}
       {activeTab === 'favorites' && (
-        <main className="px-5 pt-5 space-y-5">
-          <h2 className="font-serif text-2xl font-bold">Sevimli taomlarim</h2>
+        <main className="px-5 pt-5 space-y-5 relative z-10">
+          <h2 className="font-serif text-3xl font-bold text-white">Sevimli taomlar</h2>
           {products.filter((p) => favoriteIds.includes(p.id)).length === 0 ? (
-            <div className="p-10 text-center bg-[#141418] rounded-3xl space-y-3">
-              <Heart className="w-10 h-10 mx-auto text-[#E11D48]/60" />
-              <p className="text-sm font-semibold text-[#F4F4F5]/70">Hali sevimli taomlar qo’shilmagan</p>
+            <div className="p-10 text-center glass-panel rounded-[32px] space-y-3">
+              <Heart className="w-10 h-10 mx-auto text-[#E11D48]" />
+              <p className="text-sm font-semibold text-zinc-400">Hali sevimli taomlar qo'shilmagan</p>
               <button
                 onClick={() => setActiveTab('catalog')}
-                className="px-5 py-2.5 rounded-xl bg-[#18181D] text-white text-xs font-bold"
+                className="px-6 py-3 rounded-2xl btn-gold text-xs font-extrabold"
               >
-                Menyuni ko’rish
+                MENYUNI KO'RISH
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-5">
+            <div className="grid grid-cols-2 gap-3.5">
               {products
                 .filter((p) => favoriteIds.includes(p.id))
                 .map((product) => (
-                  <ProductCard
+                  <BentoProductCard
                     key={product.id}
                     product={product}
                     isFavorite={true}
@@ -643,16 +750,16 @@ export default function App() {
 
       {/* TAB 4: CART */}
       {activeTab === 'cart' && (
-        <main className="px-5 pt-5 space-y-5">
-          <h2 className="font-serif text-2xl font-bold">Savatcha</h2>
+        <main className="px-5 pt-5 space-y-5 relative z-10">
+          <h2 className="font-serif text-3xl font-bold text-white">Savatcha</h2>
 
           {cart.length === 0 ? (
-            <div className="p-10 text-center bg-[#141418] rounded-3xl space-y-3">
-              <ShoppingBag className="w-10 h-10 mx-auto text-[#F4F4F5]/40" />
-              <p className="text-sm font-semibold text-[#F4F4F5]/70">Savatchangiz hozircha bo’sh</p>
+            <div className="p-10 text-center glass-panel rounded-[32px] space-y-3">
+              <ShoppingBag className="w-10 h-10 mx-auto text-[#D4AF37]" />
+              <p className="text-sm font-semibold text-zinc-400">Savatchangiz hozircha bo'sh</p>
               <button
                 onClick={() => setActiveTab('catalog')}
-                className="px-6 py-3 rounded-2xl bg-[#E11D48] text-white text-xs font-bold"
+                className="px-6 py-3 rounded-2xl btn-gold text-xs font-extrabold"
               >
                 TAOM TANLASH
               </button>
@@ -664,44 +771,46 @@ export default function App() {
                   const extras = item.customizations.reduce((s, c) => s + c.price, 0);
                   const unit = item.overrideUnitPrice ?? item.product.price + extras;
                   return (
-                    <div key={item.uid} className="p-3.5 rounded-3xl bg-[#121216] border border-white/10/5 flex gap-3.5 items-center shadow-sm">
+                    <div key={item.uid} className="p-3.5 rounded-[28px] glass-panel flex gap-3.5 items-center">
                       <img src={item.product.imageUrl} alt={item.product.name} className="w-20 h-20 rounded-2xl object-cover shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-sm truncate">
+                        <h4 className="font-bold text-sm text-white truncate">
                           {item.isCombo ? `Combo: ${item.product.name}` : item.product.name}
                         </h4>
                         {item.customizations.length > 0 && (
-                          <p className="text-[11px] text-[#F4F4F5]/60 truncate">
+                          <p className="text-[11px] text-zinc-400 truncate">
                             {item.customizations.map((c) => c.name).join(', ')}
                           </p>
                         )}
                         {item.comboDetails && (
                           <p className="text-[11px] text-[#D4AF37] font-medium truncate">{item.comboDetails.join(' • ')}</p>
                         )}
-                        <div className="font-extrabold text-sm text-[#E11D48] mt-1">{formatUZS(unit * item.quantity)}</div>
+                        <div className="font-extrabold text-sm text-[#D4AF37] mt-1">{formatUZS(unit * item.quantity)}</div>
                       </div>
 
-                      <div className="flex flex-col items-center gap-1 bg-[#141418] rounded-2xl p-1">
+                      <div className="flex flex-col items-center gap-1 bg-white/[0.06] rounded-2xl p-1">
                         <button
-                          onClick={() =>
+                          onClick={() => {
+                            haptic('light');
                             setCart((prev) =>
                               prev.map((c) => (c.uid === item.uid ? { ...c, quantity: c.quantity + 1 } : c))
-                            )
-                          }
-                          className="w-7 h-7 flex items-center justify-center"
+                            );
+                          }}
+                          className="w-7 h-7 flex items-center justify-center text-white"
                         >
                           <Plus className="w-3.5 h-3.5" />
                         </button>
-                        <span className="text-xs font-bold">{item.quantity}</span>
+                        <span className="text-xs font-extrabold">{item.quantity}</span>
                         <button
-                          onClick={() =>
+                          onClick={() => {
+                            haptic('light');
                             setCart((prev) =>
                               item.quantity > 1
                                 ? prev.map((c) => (c.uid === item.uid ? { ...c, quantity: c.quantity - 1 } : c))
                                 : prev.filter((c) => c.uid !== item.uid)
-                            )
-                          }
-                          className="w-7 h-7 flex items-center justify-center"
+                            );
+                          }}
+                          className="w-7 h-7 flex items-center justify-center text-zinc-300"
                         >
                           {item.quantity === 1 ? <Trash2 className="w-3.5 h-3.5 text-[#E11D48]" /> : <Minus className="w-3.5 h-3.5" />}
                         </button>
@@ -711,64 +820,64 @@ export default function App() {
                 })}
               </div>
 
-              {/* SMART UPSELL */}
-              <div className="p-4 rounded-3xl bg-[#141418] space-y-2.5">
-                <div className="text-xs font-extrabold uppercase tracking-wider text-[#F4F4F5]/65">
-                  Bunga Coca-Cola yoki Fri ham qo’shamizmi?
+              {/* Smart Upsell */}
+              <div className="p-4 rounded-[28px] gold-card space-y-2.5">
+                <div className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#D4AF37]">
+                  TAVSIYA ETILADIGAN QO'SHIMCHALAR
                 </div>
                 <div className="flex gap-2.5 overflow-x-auto no-scrollbar">
                   {products
-                    .filter((p) => ['coca-cola', 'french-fries', 'milkshake'].some((s) => p.name.toLowerCase().includes(s.split('-')[0])))
-                    .slice(0, 3)
+                    .filter((p) => ['cola', 'fries', 'milkshake', 'fanta'].some((s) => p.name.toLowerCase().includes(s)))
+                    .slice(0, 4)
                     .map((upsell) => (
                       <button
                         key={upsell.id}
                         onClick={() => addToCart(upsell, 1, [])}
-                        className="shrink-0 flex items-center gap-2.5 bg-[#121216] p-2 pr-3.5 rounded-2xl border border-white/10/10"
+                        className="shrink-0 flex items-center gap-2.5 glass-panel p-2 pr-3.5 rounded-2xl active:scale-95 transition-transform"
                       >
                         <img src={upsell.imageUrl} alt={upsell.name} className="w-10 h-10 rounded-xl object-cover" />
                         <div className="text-left">
-                          <div className="text-xs font-bold">{upsell.name}</div>
-                          <div className="text-[11px] font-bold text-[#E11D48]">+ {formatUZS(upsell.price)}</div>
+                          <div className="text-xs font-bold text-white">{upsell.name}</div>
+                          <div className="text-[11px] font-extrabold text-[#D4AF37]">+ {formatUZS(upsell.price)}</div>
                         </div>
                       </button>
                     ))}
                 </div>
               </div>
 
-              {/* Promo & Summary */}
-              <div className="p-5 rounded-3xl bg-[#121216] border border-white/10/10 space-y-3">
+              {/* Summary */}
+              <div className="p-5 rounded-[30px] glass-panel space-y-3.5">
                 <div className="flex gap-2">
                   <input
                     value={promoInput}
                     onChange={(e) => setPromoInput(e.target.value)}
-                    placeholder="Promo-kod (masalan: WELCOME15)"
-                    className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-white/10/10 text-xs uppercase font-bold"
+                    placeholder="Promo-kod (WELCOME15)"
+                    className="flex-1 px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs uppercase font-bold text-white"
                   />
                   <button
                     onClick={handleApplyPromo}
-                    className="px-4 py-2.5 rounded-xl bg-[#18181D] text-white text-xs font-bold"
+                    className="px-4 py-2.5 rounded-xl btn-gold text-xs font-extrabold"
                   >
-                    Qo’llash
+                    Qo'llash
                   </button>
                 </div>
 
                 {availablePoints > 0 && (
-                  <label className="flex items-center justify-between text-xs font-semibold pt-1">
+                  <label className="flex items-center justify-between text-xs font-semibold text-zinc-300 pt-1">
                     <span>Bonus ballarni ishlatish ({availablePoints.toLocaleString('ru-RU')} ball)</span>
                     <input
                       type="checkbox"
                       checked={useBonus}
                       onChange={(e) => setUseBonus(e.target.checked)}
-                      className="w-4 h-4 accent-[#E11D48]"
+                      className="w-4 h-4 accent-[#D4AF37]"
                     />
                   </label>
                 )}
 
-                <div className="space-y-1.5 pt-2 border-t border-white/10/10 text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-[#F4F4F5]/65">Taomlar summasi:</span>
-                    <span className="font-bold">{formatUZS(cartSubtotal)}</span>
+                <div className="space-y-1.5 pt-2 border-t border-white/10 text-xs">
+                  <div className="flex justify-between text-zinc-400">
+                    <span>Taomlar summasi:</span>
+                    <span className="font-bold text-white">{formatUZS(cartSubtotal)}</span>
                   </div>
                   {discountAmount > 0 && (
                     <div className="flex justify-between text-[#E11D48]">
@@ -782,95 +891,100 @@ export default function App() {
                       <span className="font-bold">-{formatUZS(bonusApplied)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between">
-                    <span className="text-[#F4F4F5]/65">Yetkazib berish:</span>
-                    <span className="font-bold">{deliveryFee === 0 ? 'BEPUL' : formatUZS(deliveryFee)}</span>
+                  <div className="flex justify-between text-zinc-400">
+                    <span>Yetkazib berish:</span>
+                    <span className="font-bold text-emerald-400">{deliveryFee === 0 ? 'BEPUL' : formatUZS(deliveryFee)}</span>
                   </div>
-                  <div className="flex justify-between text-base font-extrabold pt-2 border-t border-white/10/10">
-                    <span>Jami to’lov:</span>
-                    <span>{formatUZS(finalTotal)}</span>
+                  <div className="flex justify-between text-base font-extrabold pt-2 border-t border-white/10 text-white">
+                    <span>Jami to'lov:</span>
+                    <span className="text-[#D4AF37]">{formatUZS(finalTotal)}</span>
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setShowCheckout(true)}
-                  className="w-full py-4 rounded-2xl bg-[#E11D48] text-white font-bold text-sm tracking-wide shadow-luxury"
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => {
+                    haptic('light');
+                    setShowCheckout(true);
+                  }}
+                  className="w-full py-4 rounded-2xl btn-crimson font-extrabold text-sm tracking-wider uppercase shadow-luxury"
                 >
                   BUYURTMANI RASMIYLASHTIRISH
-                </button>
+                </motion.button>
               </div>
             </>
           )}
         </main>
       )}
 
-      {/* TAB 5: PROFILE & LOYALTY */}
+      {/* TAB 5: PROFILE */}
       {activeTab === 'profile' && (
-        <main className="px-5 pt-5 space-y-6">
-          {/* VIP Loyalty Card */}
-          <div className="p-6 rounded-[32px] bg-gradient-to-br from-[#0F0F0F] via-[#1C1917] to-[#292524] text-[#FAF7F2] shadow-luxury space-y-4 border border-[#D4AF37]/30">
+        <main className="px-5 pt-5 space-y-6 relative z-10">
+          <div className="p-6 rounded-[34px] gold-card shadow-luxury space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-extrabold tracking-[0.2em] text-[#D4AF37] uppercase">
-                THE FAST FOOD CLUB
+              <span className="text-[10px] font-extrabold tracking-[0.25em] text-[#D4AF37] uppercase">
+                THE FAST FOOD PRIVILEGE
               </span>
-              <span className="px-3 py-1 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] text-xs font-extrabold flex items-center gap-1">
+              <span className="px-3 py-1 rounded-full btn-gold text-[10px] font-extrabold flex items-center gap-1">
                 <Award className="w-3.5 h-3.5" />
-                {userProfile?.loyalty?.tier || 'BRONZE'}
+                {userProfile?.loyalty?.tier || 'VIP GOLD'}
               </span>
             </div>
 
             <div>
-              <div className="text-xs text-white/60">Mavjud bonus balans</div>
-              <div className="font-serif text-3xl font-bold text-white mt-0.5">
-                {(userProfile?.loyalty?.points || 0).toLocaleString('ru-RU')} <span className="text-sm text-[#D4AF37]">ball</span>
+              <div className="text-xs text-zinc-400">Mavjud bonus balans</div>
+              <div className="font-serif text-4xl font-bold text-white mt-0.5">
+                {(userProfile?.loyalty?.points || 0).toLocaleString('ru-RU')}{' '}
+                <span className="text-sm text-[#D4AF37] font-sans">ball</span>
               </div>
             </div>
 
-            <div className="text-xs text-white/70 flex justify-between pt-2 border-t border-white/10">
+            <div className="text-xs text-zinc-300 flex justify-between pt-3 border-t border-white/10">
               <span>Mijoz: {userProfile?.firstName || 'Mehmon'}</span>
               <span>Jami xarid: {formatUZS(userProfile?.loyalty?.totalSpent || 0)}</span>
             </div>
           </div>
 
-          {/* Active Promo Codes */}
-          <div className="p-4 rounded-3xl bg-[#141418] flex items-center justify-between">
+          <div className="p-4 rounded-[26px] glass-panel flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Tag className="w-5 h-5 text-[#E11D48]" />
+              <div className="w-10 h-10 rounded-2xl bg-[#E11D48]/15 flex items-center justify-center">
+                <Tag className="w-5 h-5 text-[#E11D48]" />
+              </div>
               <div>
-                <div className="text-xs font-extrabold">WELCOME15</div>
-                <div className="text-[11px] text-[#F4F4F5]/70">Birinchi buyurtmaga 15% chegirma</div>
+                <div className="text-xs font-extrabold text-white">WELCOME15</div>
+                <div className="text-[11px] text-zinc-400">Birinchi buyurtmaga 15% chegirma</div>
               </div>
             </div>
             <button
               onClick={() => {
+                haptic('light');
                 setPromoInput('WELCOME15');
                 setActiveTab('cart');
               }}
-              className="px-3 py-1.5 rounded-xl bg-[#18181D] text-white text-xs font-bold"
+              className="px-3.5 py-2 rounded-xl btn-gold text-xs font-extrabold"
             >
               Ishlatish
             </button>
           </div>
 
-          {/* Order History */}
           <div className="space-y-3">
-            <h3 className="font-serif text-xl font-bold">Buyurtmalar tarixi</h3>
+            <h3 className="font-serif text-2xl font-bold text-white">Buyurtmalar tarixi</h3>
             {orders.length === 0 ? (
-              <p className="text-xs text-[#F4F4F5]/60">Hali buyurtmalar mavjud emas.</p>
+              <p className="text-xs text-zinc-500">Hali buyurtmalar mavjud emas.</p>
             ) : (
               orders.map((ord) => (
-                <div key={ord.id} className="p-4 rounded-3xl bg-[#121216] border border-white/10/10 space-y-2.5">
+                <div key={ord.id} className="p-4 rounded-[26px] glass-panel space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-extrabold text-sm">Buyurtma #{ord.orderNumber}</span>
-                    <span className="px-2.5 py-1 rounded-full bg-[#141418] text-[11px] font-bold">
+                    <span className="font-extrabold text-sm text-white">Buyurtma #{ord.orderNumber}</span>
+                    <span className="px-2.5 py-1 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] text-[10px] font-extrabold">
                       {TRACKING_STEPS.find((s) => s.key === ord.orderStatus)?.label || ord.orderStatus}
                     </span>
                   </div>
-                  <div className="text-xs text-[#F4F4F5]/70">
+                  <div className="text-xs text-zinc-400">
                     {ord.items.map((i) => `${i.name} x${i.quantity}`).join(', ')}
                   </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-white/10/5">
-                    <span className="font-bold text-sm">{formatUZS(ord.totalAmount)}</span>
+                  <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                    <span className="font-extrabold text-sm text-[#D4AF37]">{formatUZS(ord.totalAmount)}</span>
                     <button
                       onClick={() => {
                         for (const item of ord.items) {
@@ -879,10 +993,10 @@ export default function App() {
                         }
                         setActiveTab('cart');
                       }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#18181D] text-white text-xs font-bold"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 text-white text-xs font-bold"
                     >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      Yana buyurtma berish
+                      <RotateCcw className="w-3.5 h-3.5 text-[#D4AF37]" />
+                      Takrorlash
                     </button>
                   </div>
                 </div>
@@ -892,6 +1006,70 @@ export default function App() {
         </main>
       )}
 
+      {/* FLOATING CART PILL (When cart has items and not on cart tab) */}
+      <AnimatePresence>
+        {cartCount > 0 && activeTab !== 'cart' && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            className="fixed bottom-24 inset-x-0 max-w-lg mx-auto px-5 z-30"
+          >
+            <button
+              onClick={() => {
+                haptic('light');
+                setActiveTab('cart');
+              }}
+              className="w-full py-3.5 px-5 rounded-[24px] btn-crimson shadow-luxury flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="w-7 h-7 rounded-xl bg-black/25 flex items-center justify-center text-xs font-extrabold">
+                  {cartCount}
+                </span>
+                <span className="text-xs font-extrabold tracking-wider uppercase">Savatchani ko'rish</span>
+              </div>
+              <span className="text-sm font-extrabold">{formatUZS(cartSubtotal)}</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* FLOATING DYNAMIC DOCK NAVIGATION */}
+      <div className="fixed bottom-4 inset-x-0 max-w-lg mx-auto px-4 z-30">
+        <nav className="glass-panel rounded-[28px] px-2 py-2 flex items-center justify-around shadow-luxury">
+          {[
+            { id: 'home', icon: Home, label: 'Asosiy' },
+            { id: 'catalog', icon: LayoutGrid, label: 'Menyu' },
+            { id: 'favorites', icon: Heart, label: 'Sevimli' },
+            { id: 'cart', icon: ShoppingBag, label: 'Savat', badge: cartCount },
+            { id: 'profile', icon: UserIcon, label: 'Profil' },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const active = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  haptic('light');
+                  setActiveTab(tab.id as typeof activeTab);
+                }}
+                className={`relative flex flex-col items-center gap-1 px-3.5 py-2 rounded-2xl transition-all ${
+                  active ? 'bg-[#D4AF37]/15 text-[#D4AF37]' : 'text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span className="text-[10px] font-bold">{tab.label}</span>
+                {Boolean(tab.badge && tab.badge > 0) && (
+                  <span className="absolute top-1 right-2 w-4 h-4 rounded-full bg-[#E11D48] text-white text-[9px] font-extrabold flex items-center justify-center">
+                    {tab.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
       {/* CHECKOUT MODAL */}
       <AnimatePresence>
         {showCheckout && (
@@ -899,45 +1077,48 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end justify-center"
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end justify-center"
           >
             <motion.div
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
-              className="w-full max-w-lg max-h-[92vh] bg-[#09090B] rounded-t-[32px] p-6 overflow-y-auto space-y-4"
+              className="w-full max-w-lg max-h-[92vh] bg-[#0D0D11] border-t border-[#D4AF37]/30 rounded-t-[34px] p-6 overflow-y-auto space-y-4"
             >
               <div className="flex items-center justify-between">
-                <h2 className="font-serif text-2xl font-bold">Buyurtmani tasdiqlash</h2>
-                <button onClick={() => setShowCheckout(false)} className="text-xs font-bold px-3 py-1.5 rounded-full bg-[#141418]">
+                <h2 className="font-serif text-2xl font-bold text-white">Buyurtmani tasdiqlash</h2>
+                <button
+                  onClick={() => setShowCheckout(false)}
+                  className="text-xs font-bold px-3.5 py-1.5 rounded-full glass-panel text-zinc-300"
+                >
                   Yopish
                 </button>
               </div>
 
               <div className="space-y-3">
                 <div>
-                  <label className="text-xs font-bold text-[#F4F4F5]/70">Ismingiz</label>
+                  <label className="text-xs font-bold text-zinc-400">Ismingiz</label>
                   <input
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    className="w-full mt-1 px-4 py-3 rounded-2xl bg-[#121216] border border-white/10/15 text-sm"
+                    className="w-full mt-1 px-4 py-3 rounded-2xl glass-panel text-sm text-white"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#F4F4F5]/70">Telefon raqam</label>
+                  <label className="text-xs font-bold text-zinc-400">Telefon raqam</label>
                   <div className="relative mt-1">
-                    <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#F4F4F5]/45" />
+                    <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#D4AF37]" />
                     <input
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#121216] border border-white/10/15 text-sm"
+                      className="w-full pl-10 pr-4 py-3 rounded-2xl glass-panel text-sm text-white"
                     />
                   </div>
                 </div>
                 <div>
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-[#F4F4F5]/70">Yetkazib berish manzili</label>
-                    <button onClick={detectLocation} className="inline-flex items-center gap-1 text-xs font-bold text-[#E11D48]">
+                    <label className="text-xs font-bold text-zinc-400">Yetkazib berish manzili</label>
+                    <button onClick={detectLocation} className="inline-flex items-center gap-1 text-xs font-bold text-[#D4AF37]">
                       <Navigation className="w-3.5 h-3.5" />
                       GPS aniqlash
                     </button>
@@ -945,36 +1126,33 @@ export default function App() {
                   <input
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    className="w-full mt-1 px-4 py-3 rounded-2xl bg-[#121216] border border-white/10/15 text-sm"
+                    className="w-full mt-1 px-4 py-3 rounded-2xl glass-panel text-sm text-white"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#F4F4F5]/70">Kuryer uchun izoh (ixtiyoriy)</label>
+                  <label className="text-xs font-bold text-zinc-400">Kuryer uchun izoh</label>
                   <input
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    placeholder="Masalan: 2-kirish yo’lagi, domofon 45"
-                    className="w-full mt-1 px-4 py-3 rounded-2xl bg-[#121216] border border-white/10/15 text-sm"
+                    placeholder="Masalan: 2-kirish yo'lagi, domofon 45"
+                    className="w-full mt-1 px-4 py-3 rounded-2xl glass-panel text-sm text-white"
                   />
                 </div>
-
                 <div>
-                  <label className="text-xs font-bold text-[#F4F4F5]/70">To’lov usuli</label>
+                  <label className="text-xs font-bold text-zinc-400">To'lov usuli</label>
                   <div className="grid grid-cols-2 gap-2.5 mt-1.5">
                     <button
                       onClick={() => setPaymentMethod('CASH')}
-                      className={`py-3 rounded-2xl text-xs font-bold border ${
-                        paymentMethod === 'CASH' ? 'bg-[#18181D] text-white border-white/10' : 'bg-[#121216] border-white/10/15'
+                      className={`py-3 rounded-2xl text-xs font-extrabold border ${
+                        paymentMethod === 'CASH' ? 'btn-gold border-transparent' : 'glass-panel text-zinc-300'
                       }`}
                     >
                       Naqd pul
                     </button>
                     <button
                       onClick={() => setPaymentMethod('CARD_ON_DELIVERY')}
-                      className={`py-3 rounded-2xl text-xs font-bold border ${
-                        paymentMethod === 'CARD_ON_DELIVERY'
-                          ? 'bg-[#18181D] text-white border-white/10'
-                          : 'bg-[#121216] border-white/10/15'
+                      className={`py-3 rounded-2xl text-xs font-extrabold border ${
+                        paymentMethod === 'CARD_ON_DELIVERY' ? 'btn-gold border-transparent' : 'glass-panel text-zinc-300'
                       }`}
                     >
                       Yetkazishda karta
@@ -986,9 +1164,9 @@ export default function App() {
               <button
                 disabled={submittingOrder}
                 onClick={submitOrder}
-                className="w-full py-4 rounded-2xl bg-[#E11D48] text-white font-bold text-sm shadow-luxury disabled:opacity-50"
+                className="w-full py-4 rounded-2xl btn-crimson font-extrabold text-sm shadow-luxury disabled:opacity-50"
               >
-                {submittingOrder ? 'YUBORILMOQDA...' : `TASDIQLASH - ${formatUZS(finalTotal)}`}
+                {submittingOrder ? 'YUBORILMOQDA...' : `TASDIQLASH • ${formatUZS(finalTotal)}`}
               </button>
             </motion.div>
           </motion.div>
@@ -1002,33 +1180,32 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-6"
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-6"
           >
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
-              className="w-full max-w-sm bg-[#09090B] rounded-[32px] p-7 text-center space-y-4"
+              className="w-full max-w-sm gold-card rounded-[34px] p-7 text-center space-y-4 shadow-luxury"
             >
-              <CheckCircle2 className="w-16 h-16 mx-auto text-emerald-600" />
-              <h3 className="font-serif text-2xl font-bold">Buyurtma qabul qilindi!</h3>
-              <p className="text-xs text-[#F4F4F5]/75 leading-relaxed">
-                Buyurtma raqamingiz: <strong>#{orderSuccessModal.orderNumber}</strong>. Oshxonamiz taomingizni tayyorlashni boshladi!
+              <CheckCircle2 className="w-16 h-16 mx-auto text-[#D4AF37]" />
+              <h3 className="font-serif text-3xl font-bold text-white">Buyurtma qabul qilindi!</h3>
+              <p className="text-xs text-zinc-300 leading-relaxed">
+                Buyurtma raqamingiz: <strong className="text-[#D4AF37]">#{orderSuccessModal.orderNumber}</strong>. Oshxonamiz taomingizni tayyorlashni boshladi!
               </p>
               <button
                 onClick={() => {
                   setOrderSuccessModal(null);
                   setActiveTab('home');
                 }}
-                className="w-full py-3.5 rounded-2xl bg-[#18181D] text-white font-bold text-xs"
+                className="w-full py-3.5 rounded-2xl btn-gold font-extrabold text-xs tracking-wider"
               >
-                JONLI KUZATISHGA O’TISH
+                JONLI KUZATISHGA O'TISH
               </button>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* PRODUCT 3D BOTTOM SHEET */}
       <AnimatePresence>
         {selectedProduct && (
           <ProductSheet
@@ -1041,7 +1218,6 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* SMART COMBO BUILDER */}
       <AnimatePresence>
         {showComboBuilder && (
           <ComboBuilder
@@ -1052,7 +1228,6 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* STORY VIEWER */}
       <AnimatePresence>
         {activeStory && (
           <StoryViewer
@@ -1062,45 +1237,11 @@ export default function App() {
           />
         )}
       </AnimatePresence>
-
-      {/* BOTTOM NAVIGATION */}
-      <nav className="fixed bottom-0 inset-x-0 max-w-lg mx-auto z-30 bg-[#09090B]/95 backdrop-blur-xl border-t border-white/10/10 px-4 py-2.5 flex items-center justify-around">
-        {[
-          { id: 'home', icon: Home, label: 'Asosiy' },
-          { id: 'catalog', icon: LayoutGrid, label: 'Katalog' },
-          { id: 'favorites', icon: Heart, label: 'Sevimli' },
-          { id: 'cart', icon: ShoppingBag, label: 'Savatcha', badge: cart.reduce((s, i) => s + i.quantity, 0) },
-          { id: 'profile', icon: UserIcon, label: 'Profil' },
-        ].map((tab) => {
-          const Icon = tab.icon;
-          const active = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => {
-                haptic('light');
-                setActiveTab(tab.id as typeof activeTab);
-              }}
-              className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all ${
-                active ? 'text-[#E11D48]' : 'text-[#F4F4F5]/55'
-              }`}
-            >
-              <Icon className="w-5 h-5" />
-              <span className="text-[10px] font-bold">{tab.label}</span>
-              {Boolean(tab.badge && tab.badge > 0) && (
-                <span className="absolute -top-0.5 right-1 w-4 h-4 rounded-full bg-[#E11D48] text-white text-[10px] font-extrabold flex items-center justify-center">
-                  {tab.badge}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </nav>
     </div>
   );
 }
 
-function ProductCard({
+function BentoProductCard({
   product,
   isFavorite,
   onToggleFavorite,
@@ -1120,26 +1261,28 @@ function ProductCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-[#121216] rounded-[28px] overflow-hidden border border-white/10/5 shadow-sm hover:shadow-luxury transition-shadow"
+      className="glass-panel rounded-[26px] overflow-hidden flex flex-col justify-between group hover:border-[#D4AF37]/35 transition-all"
     >
-      <div onClick={onOpen} className="relative h-56 overflow-hidden cursor-pointer bg-[#141418]">
+      <div onClick={onOpen} className="relative h-36 overflow-hidden cursor-pointer bg-[#121216]">
         <img
           src={product.imageUrl}
           alt={product.name}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
-        <div className="absolute top-3.5 left-3.5 flex gap-1.5">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D11] via-transparent to-black/25" />
+
+        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1">
           {discountPct > 0 && (
-            <span className="px-2.5 py-1 rounded-full bg-[#E11D48] text-white text-[11px] font-extrabold">
+            <span className="px-2 py-0.5 rounded-full btn-crimson text-[9px] font-extrabold">
               -{discountPct}%
             </span>
           )}
           {product.isNew && (
-            <span className="px-2.5 py-1 rounded-full bg-[#18181D] text-[#D4AF37] text-[11px] font-extrabold">
-              YANGI
+            <span className="px-2 py-0.5 rounded-full btn-gold text-[9px] font-extrabold">
+              NEW
             </span>
           )}
         </div>
@@ -1149,38 +1292,38 @@ function ProductCard({
             e.stopPropagation();
             onToggleFavorite(product.id);
           }}
-          className="absolute top-3.5 right-3.5 w-10 h-10 rounded-full bg-[#141418]/90 backdrop-blur-md flex items-center justify-center shadow"
+          className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-black/55 backdrop-blur-md flex items-center justify-center border border-white/10"
         >
-          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-[#E11D48] text-[#E11D48]' : 'text-[#F4F4F5]'}`} />
+          <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-[#E11D48] text-[#E11D48]' : 'text-white'}`} />
         </button>
 
-        <span className="absolute bottom-3 left-3.5 px-2.5 py-1 rounded-full bg-black/65 backdrop-blur-md text-white text-[11px] font-semibold flex items-center gap-1">
-          <Clock className="w-3 h-3 text-[#D4AF37]" />
-          {product.preparationTime} daq
+        <span className="absolute bottom-2 left-2.5 px-2 py-0.5 rounded-full bg-black/65 backdrop-blur-md text-[10px] font-semibold text-zinc-200 flex items-center gap-1">
+          <Clock className="w-2.5 h-2.5 text-[#D4AF37]" />
+          {product.preparationTime}d
         </span>
       </div>
 
-      <div className="p-5 space-y-3">
+      <div className="p-3.5 flex-1 flex flex-col justify-between space-y-2.5">
         <div onClick={onOpen} className="cursor-pointer">
-          <h4 className="font-serif text-xl font-bold text-[#F4F4F5]">{product.name}</h4>
-          <p className="text-xs text-[#F4F4F5]/65 line-clamp-2 mt-1 leading-relaxed">{product.description}</p>
+          <h4 className="font-bold text-xs text-white line-clamp-1">{product.name}</h4>
+          <p className="text-[10px] text-zinc-400 line-clamp-2 mt-0.5 leading-snug">{product.description}</p>
         </div>
 
         <div className="flex items-center justify-between pt-1">
           <div>
             {product.oldPrice && product.oldPrice > product.price && (
-              <div className="text-xs line-through text-[#F4F4F5]/40">{formatUZS(product.oldPrice)}</div>
+              <div className="text-[9px] line-through text-zinc-500">{formatUZS(product.oldPrice)}</div>
             )}
-            <div className="text-lg font-extrabold text-[#F4F4F5]">{formatUZS(product.price)}</div>
+            <div className="text-xs font-extrabold text-[#D4AF37]">{formatUZS(product.price)}</div>
           </div>
 
           <motion.button
-            whileTap={{ scale: 0.93 }}
+            whileTap={{ scale: 0.88 }}
             onClick={onQuickAdd}
-            className="px-5 py-3 rounded-2xl bg-[#18181D] text-[#FAF7F2] font-bold text-xs tracking-wide flex items-center gap-1.5 shadow"
+            aria-label="Qo'shish"
+            className="w-8 h-8 rounded-xl btn-gold flex items-center justify-center shadow-md"
           >
-            <Plus className="w-4 h-4 text-[#D4AF37]" />
-            QO’SHISH
+            <Plus className="w-4 h-4 stroke-[2.5]" />
           </motion.button>
         </div>
       </div>
