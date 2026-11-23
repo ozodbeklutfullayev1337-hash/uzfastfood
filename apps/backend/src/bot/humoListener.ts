@@ -1,4 +1,4 @@
-import { TelegramClient } from "telegram";
+﻿import { TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import { NewMessage } from "telegram/events";
 import { prisma } from "../lib/prisma";
@@ -10,7 +10,7 @@ export async function startHumoListener() {
   const sessionStr = process.env.TG_SESSION || "";
 
   if (!sessionStr) {
-    console.log("[HUMO] TG_SESSION topilmadi, avtomatik tinglovchi kutish rejimida.");
+    console.log("[HUMO] TG_SESSION topilmadi.");
     return;
   }
 
@@ -19,7 +19,8 @@ export async function startHumoListener() {
       connectionRetries: 5,
     });
     await client.connect();
-    console.log("[HUMO] @HUMOcardbot avtomatik to'lov tinglovchisi ishga tushdi!");
+    await client.getDialogs({ limit: 30 });
+    console.log("[HUMO] @HUMOcardbot avtomatik to'lov tinglovchisi tayyor!");
 
     client.addEventHandler(async (event) => {
       try {
@@ -27,24 +28,37 @@ export async function startHumoListener() {
         if (!msg || !msg.message) return;
 
         const sender = await msg.getSender().catch(() => null);
-        const username = (sender as any)?.username?.toLowerCase() || "";
+        const username = ((sender as any)?.username || "").toLowerCase();
         const text = msg.message;
 
-        // Faqat @HUMOcardbot yoki kirim (+ ... UZS) xabarlarini tekshirish
-        if (username && username !== "humocardbot") return;
-        if (!text.includes("+") && !text.includes("➕") && !text.toLowerCase().includes("popolnenie")) return;
+        if (username === "humocardbot" || /humo|uzs/i.test(text)) {
+          console.log("[HUMO_RAW]", username, JSON.stringify(text));
+        }
 
-        // Kirim summasini ajratib olish (masalan: ➕ 50 014.00 UZS yoki +50014.00)
-        const match = text.match(/[+➕]\s*([0-9\s.,]+)\s*(?:UZS|so'm|sum)/i);
+        if (username && username !== "humocardbot") return;
+
+        const isIncome =
+          /[+➕]/.test(text) ||
+          /popolnenie|пополнение|kirim|tushum|зачисление/i.test(text);
+        if (!isIncome) return;
+
+        const match = text.match(/([0-9][0-9\s\u00A0.,]*)\s*(?:UZS|so'm|sum)/i);
         if (!match) return;
 
-        const rawNum = match[1].replace(/\s+/g, "").replace(/,/g, ".");
-        const exactAmount = Math.floor(parseFloat(rawNum));
+        let numStr = match[1].replace(/[\s\u00A0]/g, "");
+        if (/\.\d{2}$/.test(numStr)) {
+          numStr = numStr.replace(/,/g, "");
+        } else if (/,\d{2}$/.test(numStr)) {
+          numStr = numStr.replace(/\./g, "").replace(",", ".");
+        } else {
+          numStr = numStr.replace(/[.,]/g, "");
+        }
+
+        const exactAmount = Math.floor(parseFloat(numStr));
         if (!exactAmount || exactAmount <= 0) return;
 
         console.log("[HUMO] Kirim aniqlandi:", exactAmount, "UZS");
 
-        // Bazadan kutilayotgan va muddati o'tmagan so'rovni qidirish
         const pending = await prisma.topUpRequest.findFirst({
           where: {
             status: "PENDING",
@@ -60,7 +74,6 @@ export async function startHumoListener() {
           return;
         }
 
-        // Tranzaksiya: so'rovni COMPLETED qilish va foydalanuvchi balansiga qo'shish
         const [updatedReq, updatedUser] = await prisma.$transaction([
           prisma.topUpRequest.update({
             where: { id: pending.id },
@@ -72,9 +85,8 @@ export async function startHumoListener() {
           }),
         ]);
 
-        console.log(`[HUMO] Muvaffaqiyatli! User ${updatedUser.firstName} balansi +${exactAmount} UZS ga oshirildi.`);
+        console.log(`[HUMO] Muvaffaqiyatli! ${updatedUser.firstName} balansi +${exactAmount} UZS ga oshirildi.`);
 
-        // Mini App ekranini jonli yangilash
         io.emit("wallet:updated", {
           telegramId: updatedUser.telegramId,
           requestId: updatedReq.id,
@@ -82,7 +94,6 @@ export async function startHumoListener() {
           newBalance: updatedUser.balance,
         });
 
-        // Telegram bot orqali mijozga xabar yuborish
         const botToken = process.env.BOT_TOKEN;
         if (botToken && updatedUser.telegramId && !updatedUser.telegramId.startsWith("777")) {
           fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -96,7 +107,7 @@ export async function startHumoListener() {
           }).catch(() => {});
         }
       } catch (err) {
-        console.error("[HUMO] Xabarni qayta ishlashda xatolik:", err);
+        console.error("[HUMO] Xatolik:", err);
       }
     }, new NewMessage({}));
   } catch (err) {
