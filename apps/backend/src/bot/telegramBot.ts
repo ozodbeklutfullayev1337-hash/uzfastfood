@@ -1,4 +1,4 @@
-import { Telegraf, Markup } from "telegraf";
+﻿import { Telegraf, Markup } from "telegraf";
 import { prisma } from "../lib/prisma";
 import { io } from "../index";
 
@@ -15,7 +15,7 @@ const STATUS_LABELS: Record<string, string> = {
   CONFIRMED: "✅ Tasdiqlandi",
   PREPARING: "👨‍🍳 Tayyorlanmoqda",
   READY: "📦 Tayyor (kuryer kutilmoqda)",
-  ON_THE_WAY: "🛵 Kuryer yo’lda",
+  ON_THE_WAY: "🛵 Kuryer yo‘lda",
   DELIVERED: "🏁 Yetkazib berildi",
   CANCELLED: "❌ Bekor qilindi",
 };
@@ -27,7 +27,7 @@ function buildOrderKeyboard(orderId: string) {
       Markup.button.callback("👨‍🍳 Tayyorlash", `ord_status:${orderId}:PREPARING`),
     ],
     [
-      Markup.button.callback("🛵 Yo’lda", `ord_status:${orderId}:ON_THE_WAY`),
+      Markup.button.callback("🛵 Yo‘lda", `ord_status:${orderId}:ON_THE_WAY`),
       Markup.button.callback("🏁 Yetkazildi", `ord_status:${orderId}:DELIVERED`),
     ],
     [Markup.button.callback("❌ Bekor qilish", `ord_status:${orderId}:CANCELLED`)],
@@ -38,9 +38,21 @@ function formatOrderText(order: any) {
   const items = Array.isArray(order.items) ? order.items : [];
   const itemsText = items.length
     ? items
-        .map((it: any, i: number) => `${i + 1}. ${it.name || it.title || "Taom"} × ${it.quantity || it.qty || 1} — ${(Number(it.price || 0) * Number(it.quantity || it.qty || 1)).toLocaleString()} so’m`)
+        .map(
+          (it: any, i: number) =>
+            `${i + 1}. ${it.name || it.title || "Taom"} × ${it.quantity || it.qty || 1} — ${(
+              Number(it.unitPrice || it.price || 0) * Number(it.quantity || it.qty || 1)
+            ).toLocaleString()} so‘m`
+        )
         .join("\n")
     : "—";
+
+  const payLabel =
+    order.paymentMethod === "BALANCE"
+      ? "💰 Ichki balans (TO‘LANGAN ✅)"
+      : order.paymentMethod === "CARD_ON_DELIVERY"
+      ? "💳 Karta orqali"
+      : "💵 Naqd pul";
 
   return [
     `🔥 <b>YANGI BUYURTMA #${order.orderNumber || order.id.slice(-5)}</b>`,
@@ -50,12 +62,12 @@ function formatOrderText(order: any) {
     `📞 Telefon: <code>${order.phone}</code>`,
     `📍 Manzil: ${order.address}`,
     order.comment ? `💬 Izoh: <i>${order.comment}</i>` : null,
-    `💳 To’lov: ${order.paymentMethod === "CARD_ON_DELIVERY" ? "Karta orqali" : "Naqd pul"}`,
+    `💳 To‘lov: ${payLabel}`,
     ``,
     `🍔 <b>Buyurtma tarkibi:</b>`,
     itemsText,
     ``,
-    `💰 <b>Jami summa: ${Number(order.totalAmount).toLocaleString()} so’m</b>`,
+    `💰 <b>Jami summa: ${Number(order.totalAmount).toLocaleString()} so‘m</b>`,
   ]
     .filter((line) => line !== null)
     .join("\n");
@@ -64,24 +76,6 @@ function formatOrderText(order: any) {
 export async function notifyNewOrder(order: any) {
   if (!botInstance) return;
   const text = formatOrderText(order);
-
-    if (text === '/admin' && String(chatId) === String(process.env.ADMIN_TELEGRAM_ID || 6515742580)) {
-      const adminUrl = process.env.ADMIN_PANEL_URL || (process.env.MINI_APP_URL ? process.env.MINI_APP_URL + '?tab=admin' : 'https://uzfastfood-admin.vercel.app');
-      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: '🔐 <b>THE FAST FOOD — Admin Boshqaruv Paneli</b>\n\nFaqat sizning akkauntingiz uchun ruxsat berilgan.',
-          parse_mode: 'HTML',
-          reply_markup: {
-            inline_keyboard: [[{ text: '⚡ Admin Panelni ochish', web_app: { url: adminUrl } }]]
-          }
-        })
-      });
-      return;
-    }
-
   const keyboard = buildOrderKeyboard(order.id);
   for (const chatId of dynamicAdminIds) {
     try {
@@ -99,7 +93,7 @@ export async function notifyCustomerStatus(order: any) {
   if (!botInstance || !order?.userId) return;
   try {
     const user = await prisma.user.findUnique({ where: { id: order.userId } });
-    if (!user?.telegramId || user.telegramId === "777000111") return;
+    if (!user?.telegramId || user.telegramId.startsWith("777")) return;
     const statusText = STATUS_LABELS[order.orderStatus] || order.orderStatus;
     await botInstance.telegram.sendMessage(
       user.telegramId,
@@ -114,10 +108,32 @@ export async function notifyCustomerStatus(order: any) {
 export function startTelegramBot() {
   const token = process.env.BOT_TOKEN;
   const url = process.env.MINI_APP_URL || process.env.PUBLIC_WEBAPP_URL;
+  const adminPanelUrl = process.env.ADMIN_PANEL_URL || "https://uzfastfood-admin.vercel.app";
   if (!token) return null;
 
   const bot = new Telegraf(token);
   botInstance = bot;
+
+  // Oddiy mijozlar menyusi
+  bot.telegram
+    .setMyCommands([{ command: "start", description: "🍔 Menyuni ochish" }])
+    .catch(() => {});
+
+  // Faqat Admin ID lar uchun alohida /admin menyu buyrug'i
+  for (const adminId of dynamicAdminIds) {
+    const numId = Number(adminId);
+    if (numId) {
+      bot.telegram
+        .setMyCommands(
+          [
+            { command: "start", description: "🍔 Menyuni ochish" },
+            { command: "admin", description: "🔐 Admin Panel (Boshqaruv)" },
+          ],
+          { scope: { type: "chat", chat_id: numId } }
+        )
+        .catch(() => {});
+    }
+  }
 
   bot.start((ctx) => {
     const chatId = String(ctx.from.id);
@@ -127,9 +143,23 @@ export function startTelegramBot() {
       : undefined;
     ctx.reply(
       isAdmin
-        ? `Assalomu alaykum, Admin! ✅\nYangi buyurtmalar shu chatga kelib tushadi (ID: ${chatId}).`
+        ? `Assalomu alaykum, Admin! ✅\nYangi buyurtmalar shu chatga kelib tushadi (ID: ${chatId}).\nBoshqaruv uchun /admin buyrug'ini bosing.`
         : "Assalomu alaykum! THE FAST FOOD yetkazib berish xizmatiga xush kelibsiz!",
       kb
+    );
+  });
+
+  bot.command("admin", (ctx) => {
+    const chatId = String(ctx.from.id);
+    if (!dynamicAdminIds.has(chatId)) return;
+    ctx.reply(
+      "🔐 <b>THE FAST FOOD — Admin Boshqaruv Paneli</b>\n\nFaqat sizning Telegram akkauntingiz uchun ruxsat berilgan.",
+      {
+        parse_mode: "HTML",
+        ...Markup.inlineKeyboard([
+          [Markup.button.webApp("⚡ Admin Panelni ochish", adminPanelUrl)],
+        ]),
+      }
     );
   });
 
@@ -143,7 +173,7 @@ export function startTelegramBot() {
       });
       io.emit("order:updated", updated);
       await notifyCustomerStatus(updated);
-      await ctx.answerCbQuery(`Holat o’zgardi: ${STATUS_LABELS[newStatus] || newStatus}`);
+      await ctx.answerCbQuery(`Holat o‘zgardi: ${STATUS_LABELS[newStatus] || newStatus}`);
       await ctx.editMessageText(formatOrderText(updated), {
         parse_mode: "HTML",
         ...buildOrderKeyboard(updated.id),
