@@ -36,7 +36,8 @@ router.get("/bootstrap", async (req, res) => {
       prisma.product.findMany({ where: { isAvailable: true }, orderBy: { createdAt: "asc" } }),
       getOrCreateUser(req),
     ]);
-    res.json({ settings, categories, products, user });
+    const isAdmin = String(user.telegramId) === String(process.env.ADMIN_TELEGRAM_ID || "6515742580");
+    res.json({ settings, categories, products, user: { ...user, isAdmin } });
   } catch (e: any) {
     res.status(500).json({ error: e.message });
   }

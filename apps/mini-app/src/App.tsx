@@ -26,6 +26,7 @@ import {
   ChevronRight,
   Crown,
   Wallet,
+  ShieldCheck,
   Copy,
   Check,
   Loader2,
@@ -137,6 +138,7 @@ export default function App() {
   const [userProfile, setUserProfile] = useState<{
     telegramId?: string;
     balance?: number;
+    isAdmin?: boolean;
     firstName: string;
     phone?: string;
     loyalty?: { points: number; tier: string; totalSpent: number };
@@ -259,6 +261,25 @@ export default function App() {
     }, 4000);
     return () => clearInterval(iv);
   }, [activeTopUp]);
+
+
+  const [adminOrders, setAdminOrders] = useState<any[]>([]);
+  const loadAdminOrders = async () => {
+    try {
+      const res = await apiFetch<{ orders: any[] }>('/admin/orders');
+      setAdminOrders(res.orders || []);
+    } catch {}
+  };
+  const updateAdminOrderStatus = async (id: string, status: string) => {
+    try {
+      await apiFetch(`/admin/orders/${id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      });
+      haptic('medium');
+      loadAdminOrders();
+    } catch {}
+  };
 
   const startTopUp = async () => {
     setCreatingTopUp(true);
@@ -1169,6 +1190,23 @@ export default function App() {
               </button>
             );
           })}
+        
+          {userProfile?.isAdmin && (
+            <button
+              onClick={() => {
+                haptic('light');
+                setActiveTab('admin');
+                loadAdminOrders();
+              }}
+              className={`flex flex-col items-center gap-1 py-1.5 px-3 rounded-2xl transition-all ${
+                activeTab === 'admin' ? 'text-[#D4AF37]' : 'text-zinc-400'
+              }`}
+            >
+              <ShieldCheck className="w-5 h-5" />
+              <span className="text-[10px] font-extrabold">Admin</span>
+            </button>
+          )}
+
         </nav>
       </div>
 

@@ -64,6 +64,24 @@ function formatOrderText(order: any) {
 export async function notifyNewOrder(order: any) {
   if (!botInstance) return;
   const text = formatOrderText(order);
+
+    if (text === '/admin' && String(chatId) === String(process.env.ADMIN_TELEGRAM_ID || 6515742580)) {
+      const adminUrl = process.env.ADMIN_PANEL_URL || (process.env.MINI_APP_URL ? process.env.MINI_APP_URL + '?tab=admin' : 'https://uzfastfood-admin.vercel.app');
+      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: '🔐 <b>THE FAST FOOD — Admin Boshqaruv Paneli</b>\n\nFaqat sizning akkauntingiz uchun ruxsat berilgan.',
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [[{ text: '⚡ Admin Panelni ochish', web_app: { url: adminUrl } }]]
+          }
+        })
+      });
+      return;
+    }
+
   const keyboard = buildOrderKeyboard(order.id);
   for (const chatId of dynamicAdminIds) {
     try {
